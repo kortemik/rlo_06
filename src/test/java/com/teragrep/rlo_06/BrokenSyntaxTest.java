@@ -55,16 +55,18 @@ public class BrokenSyntaxTest {
     @Test
     void testBrokenFail() throws Exception {
         String SYSLOG_MESSAGE = "<134>1  - [ ] ] [";
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
+        stream.setInputStream(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
         Assertions.assertThrows(ParseException.class, rfc5424Frame::next);
     }
 
     @Test
     void testNilTimestamp() throws Exception {
         String input = "<14>1  host01 systemd DEA MSG-01 - sigsegv";
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(new ByteArrayInputStream((input).getBytes()));
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
+        stream.setInputStream(new ByteArrayInputStream((input).getBytes()));
         rfc5424Frame.next();
         Assertions.assertEquals("14", rfc5424Frame.priority.toString(), "Priority");
         Assertions.assertEquals("1", rfc5424Frame.version.toString(), "Version");
@@ -79,8 +81,9 @@ public class BrokenSyntaxTest {
     @Test
     void testOpenSD() throws Exception {
         String SYSLOG_MESSAGE = "<14>1 2014-06-20T09:14:07.123456+00:00 host01 systemd DEA MSG-01 [";
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
+        stream.setInputStream(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
         Assertions.assertThrows(ParseException.class, rfc5424Frame::next);
     }
 
@@ -89,8 +92,9 @@ public class BrokenSyntaxTest {
     void testAllNil() throws Exception {
         String input = "<2>1  - - - - - ";
         InputStream inputStream = new ByteArrayInputStream((input).getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
+        stream.setInputStream(inputStream);
         rfc5424Frame.next();
         Assertions.assertEquals("2", rfc5424Frame.priority.toString(), "Priority");
         Assertions.assertEquals("1", rfc5424Frame.version.toString(), "Version");

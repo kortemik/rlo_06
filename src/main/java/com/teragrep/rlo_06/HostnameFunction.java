@@ -48,7 +48,7 @@ package com.teragrep.rlo_06;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 
-public final class HostnameFunction implements BiFunction<Stream, ByteBuffer, ByteBuffer> {
+public final class HostnameFunction implements BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> {
     /*
                                                       |||||||
                                                       vvvvvvv
@@ -60,7 +60,7 @@ public final class HostnameFunction implements BiFunction<Stream, ByteBuffer, By
                 */
 
     @Override
-    public ByteBuffer apply(Stream stream, ByteBuffer buffer) {
+    public ByteBuffer apply(Streamable<Byte> stream, ByteBuffer buffer) {
 
         short hostname_max_left = 255;
 

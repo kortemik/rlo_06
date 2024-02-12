@@ -47,7 +47,7 @@ package com.teragrep.rlo_06;
 
 import java.util.function.Consumer;
 
-public final class SDParam implements Consumer<Stream>, Clearable {
+public final class SDParam implements Consumer<Streamable<Byte>>, Clearable {
     public final Fragment sdParamKey;
     public final Fragment sdParamValue;
 
@@ -62,7 +62,7 @@ public final class SDParam implements Consumer<Stream>, Clearable {
     }
 
     @Override
-    public void accept(Stream stream) {
+    public void accept(Streamable<Byte> stream) {
         if (fragmentState != FragmentState.EMPTY) {
             throw new IllegalStateException("fragmentState != FragmentState.EMPTY");
         }

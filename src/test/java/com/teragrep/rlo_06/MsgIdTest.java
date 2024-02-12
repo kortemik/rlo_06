@@ -64,7 +64,7 @@ public class MsgIdTest {
                 input.getBytes(StandardCharsets.US_ASCII)
         );
 
-        Stream stream = new Stream();
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
         stream.setInputStream(bais);
 
         msgId.accept(stream);
@@ -82,7 +82,7 @@ public class MsgIdTest {
                 input.getBytes(StandardCharsets.US_ASCII)
         );
 
-        Stream stream = new Stream();
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
         stream.setInputStream(bais);
 
         msgId.accept(stream);
@@ -100,7 +100,7 @@ public class MsgIdTest {
                 input.getBytes(StandardCharsets.US_ASCII)
         );
         assertThrows(MsgIdParseException.class, () -> {
-            Stream stream = new Stream();
+            StreamableCachedInputStream stream = new StreamableCachedInputStream();
             stream.setInputStream(bais);
             msgId.accept(stream);
             msgId.toString();

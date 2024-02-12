@@ -48,7 +48,7 @@ package com.teragrep.rlo_06;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 
-public final class PriorityFunction implements BiFunction<Stream, ByteBuffer, ByteBuffer> {
+public final class PriorityFunction implements BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> {
     /*
     |||
     vvv
@@ -60,7 +60,7 @@ public final class PriorityFunction implements BiFunction<Stream, ByteBuffer, By
     */
 
     @Override
-    public ByteBuffer apply(Stream stream, ByteBuffer buffer) {
+    public ByteBuffer apply(Streamable<Byte> stream, ByteBuffer buffer) {
         if (stream.get() != '<') {
             throw new PriorityParseException("PRIORITY < missing");
         }

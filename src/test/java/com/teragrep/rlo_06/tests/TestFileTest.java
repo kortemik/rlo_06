@@ -46,6 +46,7 @@
 package com.teragrep.rlo_06.tests;
 
 import com.teragrep.rlo_06.RFC5424Frame;
+import com.teragrep.rlo_06.StreamableCachedInputStream;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 
@@ -78,8 +79,10 @@ public class TestFileTest {
 
         final File initialFile = new File("output.txt");
         final InputStream inputStream = new BufferedInputStream(new FileInputStream(initialFile),32*1024*1024);
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
 
         Instant instant1 = Instant.now();
         int count = 1000;

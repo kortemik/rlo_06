@@ -61,8 +61,10 @@ public class AllToBytesTest {
         String SYSLOG_MESSAGE = "<14>1 2014-06-20T09:14:07.12345+00:00 host01 systemd DEA MSG-01 [sd_one@48577 id_one=\"eno\" id_two=\"owt\"][sd_two@48577 id_three=\"eerht\" id_four=\"ruof\"] msg\n";
 
         InputStream inputStream = new ByteArrayInputStream( SYSLOG_MESSAGE.getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(true);
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, true);
+
         assertTrue(rfc5424Frame.next());
 
         Fragment priority = rfc5424Frame.priority;

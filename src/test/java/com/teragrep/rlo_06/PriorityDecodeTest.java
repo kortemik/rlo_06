@@ -59,8 +59,10 @@ public class PriorityDecodeTest {
     public void testDecodePriority() throws IOException {
         String SYSLOG_MESSAGE = "<134>1 2018-01-01T10:12:00+01:00 hostname appname - - - Message";
         InputStream inputStream = new ByteArrayInputStream(SYSLOG_MESSAGE.getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(true);
-        rfc5424Frame.load(inputStream);
+
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, true);
         assertTrue(rfc5424Frame.next());
 
         RFC5424Facility facility = new RFC5424Facility(rfc5424Frame.priority);

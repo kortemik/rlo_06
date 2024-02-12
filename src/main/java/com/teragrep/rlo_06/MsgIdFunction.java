@@ -48,7 +48,7 @@ package com.teragrep.rlo_06;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 
-public final class MsgIdFunction implements BiFunction<Stream, ByteBuffer, ByteBuffer> {
+public final class MsgIdFunction implements BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> {
     /*
                                                              |||||||
                                                              vvvvvvv
@@ -60,7 +60,7 @@ public final class MsgIdFunction implements BiFunction<Stream, ByteBuffer, ByteB
     */
 
     @Override
-    public ByteBuffer apply(Stream stream, ByteBuffer buffer) {
+    public ByteBuffer apply(Streamable<Byte> stream, ByteBuffer buffer) {
         byte b;
         short msgid_max_left = 32;
 

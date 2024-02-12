@@ -48,10 +48,10 @@ package com.teragrep.rlo_06;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 
-public final class SDElementIdFunction implements BiFunction<Stream, ByteBuffer, ByteBuffer> {
+public final class SDElementIdFunction implements BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> {
 
     @Override
-    public ByteBuffer apply(Stream stream, ByteBuffer buffer) {
+    public ByteBuffer apply(Streamable<Byte> stream, ByteBuffer buffer) {
         byte b;
 
         // parse the sdId

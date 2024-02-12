@@ -64,7 +64,7 @@ public class AppNameTest {
                 input.getBytes(StandardCharsets.US_ASCII)
         );
 
-        Stream stream = new Stream();
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
         stream.setInputStream(bais);
 
         appName.accept(stream);
@@ -81,7 +81,7 @@ public class AppNameTest {
                 input.getBytes(StandardCharsets.US_ASCII)
         );
 
-        Stream stream = new Stream();
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
         stream.setInputStream(bais);
 
         appName.accept(stream);
@@ -100,7 +100,7 @@ public class AppNameTest {
         );
 
         assertThrows(AppNameParseException.class, () -> {
-            Stream stream = new Stream();
+            StreamableCachedInputStream stream = new StreamableCachedInputStream();
             stream.setInputStream(bais);
             appName.accept(stream);
             appName.toString();

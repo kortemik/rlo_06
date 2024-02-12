@@ -64,7 +64,7 @@ public class ProcIdTest {
                 input.getBytes(StandardCharsets.US_ASCII)
         );
 
-        Stream stream = new Stream();
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
         stream.setInputStream(bais);
 
         procId.accept(stream);
@@ -83,7 +83,7 @@ public class ProcIdTest {
         );
 
         assertThrows(ParseException.class, () -> {
-            Stream stream = new Stream();
+            StreamableCachedInputStream stream = new StreamableCachedInputStream();
             stream.setInputStream(bais);
             procId.accept(stream);
             procId.toString();
@@ -101,7 +101,7 @@ public class ProcIdTest {
         );
 
         assertThrows(ProcIdParseException.class, () -> {
-            Stream stream = new Stream();
+            StreamableCachedInputStream stream = new StreamableCachedInputStream();
             stream.setInputStream(bais);
             procId.accept(stream);
             procId.toString();

@@ -45,14 +45,13 @@
  */
 package com.teragrep.rlo_06;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Consumer;
 
 public final class RFC5424Frame {
-    private final Stream stream;
-    private final Consumer<Stream> streamConsumer;
+    private final Streamable<Byte> stream;
+    private final Consumer<Streamable<Byte>> streamConsumer;
 
     public final Fragment priority;
     public final Fragment version;
@@ -64,11 +63,12 @@ public final class RFC5424Frame {
     public final StructuredData structuredData; // todo as array
     public final Fragment msg;
 
-    public RFC5424Frame() {
-        this(false);
+    public RFC5424Frame(Streamable<Byte> stream) {
+        this(stream, false);
     }
 
-    public RFC5424Frame(boolean lineFeedTermination) {
+    public RFC5424Frame(Streamable<Byte> stream, boolean lineFeedTermination) {
+        this.stream = stream;
         this.priority = new Fragment(3, new PriorityFunction());
         this.version = new Fragment(1, new VersionFunction());
         this.timestamp = new Fragment(32, new TimestampFunction());
@@ -78,7 +78,6 @@ public final class RFC5424Frame {
         this.msgId = new Fragment(32, new MsgIdFunction());
         this.structuredData = new StructuredData();
         this.msg = new Fragment(256*1024, new MsgFunction(lineFeedTermination));
-        this.stream = new Stream();
 
         this.streamConsumer = priority
                 .andThen(version
@@ -134,9 +133,5 @@ public final class RFC5424Frame {
         msgId.clear();
         structuredData.clear();
         msg.clear();
-    }
-
-    public void load(InputStream inputStream) {
-        stream.setInputStream(inputStream);
     }
 }

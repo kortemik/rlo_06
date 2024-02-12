@@ -48,7 +48,7 @@ package com.teragrep.rlo_06;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 
-public final class AppNameFunction implements BiFunction<Stream, ByteBuffer, ByteBuffer> {
+public final class AppNameFunction implements BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> {
     /*
                                                      ||||||||
                                                      vvvvvvvv
@@ -61,7 +61,7 @@ public final class AppNameFunction implements BiFunction<Stream, ByteBuffer, Byt
 
 
     @Override
-    public ByteBuffer apply(Stream stream, ByteBuffer buffer) {
+    public ByteBuffer apply(Streamable<Byte> stream, ByteBuffer buffer) {
 
         byte b;
         short appname_max_left = 48;

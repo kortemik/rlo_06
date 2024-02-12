@@ -65,7 +65,7 @@ public class PriorityTest {
                 input.getBytes(StandardCharsets.US_ASCII)
         );
 
-        Stream stream = new Stream();
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
         stream.setInputStream(bais);
 
         // priority has first byte always loaded
@@ -86,7 +86,7 @@ public class PriorityTest {
         );
 
         assertThrows(PriorityParseException.class, () -> {
-            Stream stream = new Stream();
+            StreamableCachedInputStream stream = new StreamableCachedInputStream();
             stream.setInputStream(bais);
             // priority has first byte always loaded
             Assertions.assertTrue(stream.next());
@@ -106,7 +106,7 @@ public class PriorityTest {
         );
 
         assertThrows(PriorityParseException.class, () -> {
-            Stream stream = new Stream();
+            StreamableCachedInputStream stream = new StreamableCachedInputStream();
             stream.setInputStream(bais);
             // priority has first byte always loaded
             Assertions.assertTrue(stream.next());

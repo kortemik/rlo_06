@@ -74,8 +74,10 @@ public class TimestampConversionTest {
     private String getTimestamp(String timestamp) throws IOException {
         String SYSLOG_MESSAGE = "<14>1 " + timestamp + " hostname appname - - - msg\n";
         InputStream inputStream = new ByteArrayInputStream(SYSLOG_MESSAGE.getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(true);
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, true);
+        stream.setInputStream(inputStream);
         assertTrue(rfc5424Frame.next());
         return new RFC5424Timestamp(rfc5424Frame.timestamp).toZonedDateTime().toString();
     }

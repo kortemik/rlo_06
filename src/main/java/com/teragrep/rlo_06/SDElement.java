@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Consumer;
 
-public final class SDElement implements Consumer<Stream>, Clearable {
+public final class SDElement implements Consumer<Streamable<Byte>>, Clearable {
 
     public final Fragment sdElementId;
     public final List<SDParam> sdParams;
@@ -70,7 +70,7 @@ public final class SDElement implements Consumer<Stream>, Clearable {
     }
     // structured data, oh wow the performance hit
     @Override
-    public void accept(Stream stream) {
+    public void accept(Streamable<Byte> stream) {
         if (fragmentState != FragmentState.EMPTY) {
             throw new IllegalStateException("fragmentState != FragmentState.EMPTY");
         }

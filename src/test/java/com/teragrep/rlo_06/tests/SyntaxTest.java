@@ -63,8 +63,10 @@ public class SyntaxTest {
         String SYSLOG_MESSAGE2 = "<31>1 2021-12-24T09:14:07.12345+00:00 host02 journald MOI ASD-05 [ID_A@1 u=\"\\\"3\" e=\"t\"][ID_B@2 n=\"9\"] normal\n";
 
         InputStream inputStream = new ByteArrayInputStream((SYSLOG_MESSAGE + SYSLOG_MESSAGE2).getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(true);
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, true);
+
 
         int count = 1;
         for (int i = 0; i < count; i++) {
@@ -128,8 +130,10 @@ public class SyntaxTest {
     void testNoNewLineEOF() throws Exception {
         String SYSLOG_MESSAGE = "<14>1 2014-06-20T09:14:07.12345+00:00 host01 systemd DEA MSG-01 [ID_A@1 u=\"\\\"3\" e=\"t\"][ID_B@2 n=\"9\"] sigsegv";
         InputStream inputStream = new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(inputStream);
+
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
 
         int count = 1;
         for (int i = 0; i < count; i++) {
@@ -172,8 +176,10 @@ public class SyntaxTest {
     void testTeragrepStructuredElement() throws Exception {
         final File logFile = new File("src/test/resources/event.log");
         final InputStream inputStream = new BufferedInputStream(Files.newInputStream(logFile.toPath()), 32 * 1024 * 1024);
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(true);
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, true);
+
 
         Assertions.assertTrue(rfc5424Frame.next());
 
@@ -203,11 +209,13 @@ public class SyntaxTest {
     @Test
     void consecutiveNoNewLine() throws Exception {
         String SYSLOG_MESSAGE = "<46>1 2021-03-18T12:29:36.842898+02:00 logsource.example.com rsyslogd-pstats - - [event_id@48577 hostname=\"logsource.example.com\" uuid=\"80AA765156F34854B9806BC69FF68659\" unixtime=\"1616063376\" id_source=\"source\"][event_format@48577 original_format=\"rfc5424\"][event_node_relay@48577 hostname=\"logrelay.example.com\" source=\"172.17.254.29\" source_module=\"imudp\"][event_version@48577 major=\"2\" minor=\"2\" hostname=\"logrelay.example.com\" version_source=\"relay\"][event_node_router@48577 source=\"172.17.254.16\" source_module=\"imrelp\" hostname=\"logrouter.example.com\"][teragrep@48577 streamname=\"stats:impstats:0\" directory=\"rsyslogd-pstats\" unixtime=\"1616070576\"] {\"@timestamp\":\"2021-03-18T12:29:36.842898+02:00\",\"host\":\"logsource.example.com\",\"source-module\":\"impstats\", \"name\": \"tags-out\", \"origin\": \"dynstats.bucket\", \"values\": { } }";
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
+
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
 
         int count = 2;
         for (int i = 0; i < count; i++) {
-            rfc5424Frame.load(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
+            stream.setInputStream(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
 
             Assertions.assertTrue(rfc5424Frame.next());
 
@@ -247,11 +255,12 @@ public class SyntaxTest {
     @Test
     void consecutiveWithNewLine() throws Exception {
         String SYSLOG_MESSAGE = "<46>1 2021-03-25T15:14:09.449777+02:00 logsource.example.com rsyslogd-pstats - - [event_id@48577 hostname=\"logsource.example.com\" uuid=\"30AF2CD3C24F47C8BA687D56E0300246\" unixtime=\"1616678049\" id_source=\"source\"][event_format@48577 original_format=\"rfc5424\"][event_node_relay@48577 hostname=\"logrelay.example.com\" source=\"172.17.254.29\" source_module=\"imudp\"][event_version@48577 major=\"2\" minor=\"2\" hostname=\"logrelay.example.com\" version_source=\"relay\"][event_node_router@48577 source=\"172.17.254.16\" source_module=\"imrelp\" hostname=\"logrouter.example.com\"][teragrep@48577 streamname=\"stats:impstats:0\" directory=\"rsyslogd-pstats\" unixtime=\"1616685249\"] {\"@timestamp\":\"2021-03-25T15:14:09.449777+02:00\",\"host\":\"logsource.example.com\",\"source-module\":\"impstats\", \"name\": \"resource-usage\", \"origin\": \"impstats\", \"utime\": 693053726, \"stime\": 133593735, \"maxrss\": 4690828, \"minflt\": 46694808, \"majflt\": 0, \"inblock\": 122077416, \"oublock\": 123878288, \"nvcsw\": 7199, \"nivcsw\": 9287, \"openfiles\": 20 }\n";
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(true);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, true);
 
         int count = 2;
         for (int i = 0; i < count; i++) {
-            rfc5424Frame.load(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
+            stream.setInputStream(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
 
             Assertions.assertTrue(rfc5424Frame.next());
 
@@ -295,8 +304,9 @@ public class SyntaxTest {
         String SYSLOG_MESSAGE = "<134>1 2019-03-08T14:00:00+02:00 host-1-2-3-4 app-tag - - -  1.2.3.4 - - [08/Mar/2019:14:00:00 +0200] \"POST /idt/device/";
 
         InputStream inputStream = new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
 
         int count = 1;
         for (int i = 0; i < count; i++) {
@@ -321,8 +331,9 @@ public class SyntaxTest {
         String SYSLOG_MESSAGE = "<15>1 2021-11-10T12:46:33+02:00 HOST01A  PROD01A - [event_id@48577 hostname=\"somehostname.tld\" uuid=\"4849E84B6C1C42C09551DC06F4D7F4AE\" unixtime=\"1636548393\" id_source=\"relay\"][rfc3164@48577 syslogtag=\"[i][be][broken][sdelem]\"][event_format@48577 original_format=\"rfc3164\"][event_node_relay@48577 hostname=\"relay.somedomain.tld\" source=\"gateway\" source_module=\"imptcp\"][event_version@48577 major=\"2\" minor=\"2\" hostname=\"relay.somedomain.tld\" version_source=\"relay\"][event_node_router@48577 source=\"127.1.2.3\" source_module=\"imrelp\" hostname=\"route.somedomain.tld\"][teragrep@48577 streamname=\"on:two:messages:0\" directory=\"host_log_data\" unixtime=\"1636548394\"]  source-http <snip>";
 
         InputStream inputStream = new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(false);
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, false);
 
         int count = 1;
         for (int i = 0; i < count; i++) {
@@ -347,8 +358,9 @@ public class SyntaxTest {
     public void noSDTest() throws IOException {
         String SYSLOG_MESSAGE = "<15>1 2019-05-29T15:00:00+03:00 PROD03A  PRODA - -  http(Worker1";
         InputStream inputStream = new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes());
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
-        rfc5424Frame.load(inputStream);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        stream.setInputStream(inputStream);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
 
         int count = 1;
         for (int i = 0; i < count; i++) {
@@ -372,11 +384,12 @@ public class SyntaxTest {
     @Test
     void consecutiveMoSDTest() throws Exception {
         String SYSLOG_MESSAGE = "<15>1 2019-05-29T15:00:00+03:00 PROD03A  PRODA - -  http(Worker1";
-        RFC5424Frame rfc5424Frame = new RFC5424Frame();
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream);
 
         int count = 2;
         for (int i = 0; i < count; i++) {
-            rfc5424Frame.load(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
+            stream.setInputStream(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
 
             Assertions.assertTrue(rfc5424Frame.next());
             // Message 1
@@ -408,11 +421,12 @@ public class SyntaxTest {
     void multipleNewlinesInMsg() throws Exception {
         String SYSLOG_MESSAGE = "<14>1 2022-12-13T14:41:29.715Z test-stream 9627df7a-testi - - - Testing text.\ntest\ning.\n";
 
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(false);
+        StreamableCachedInputStream stream = new StreamableCachedInputStream();
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, false);
 
         int count = 1;
         for (int i = 0; i < count; i++) {
-            rfc5424Frame.load(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
+            stream.setInputStream(new ByteArrayInputStream((SYSLOG_MESSAGE).getBytes()));
 
             Assertions.assertTrue(rfc5424Frame.next());
 

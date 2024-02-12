@@ -47,16 +47,15 @@ package com.teragrep.rlo_06;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-public final class Fragment implements Consumer<Stream>, Clearable, Matchable, Byteable {
+public final class Fragment implements Consumer<Streamable<Byte>>, Clearable, Matchable, Byteable {
 
     private final ByteBuffer buffer;
     private FragmentState fragmentState;
 
-    final BiFunction<Stream, ByteBuffer, ByteBuffer> parseRule;
+    final BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> parseRule;
 
     public final boolean isStub;
 
@@ -67,7 +66,7 @@ public final class Fragment implements Consumer<Stream>, Clearable, Matchable, B
         this.fragmentState = FragmentState.EMPTY;
     }
 
-    Fragment(int bufferSize, BiFunction<Stream, ByteBuffer, ByteBuffer> parseRule) {
+    Fragment(int bufferSize, BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> parseRule) {
         this.buffer = ByteBuffer.allocateDirect(bufferSize);
         this.fragmentState = FragmentState.EMPTY;
         this.parseRule = parseRule;
@@ -75,7 +74,7 @@ public final class Fragment implements Consumer<Stream>, Clearable, Matchable, B
     }
 
     @Override
-    public void accept(Stream stream) {
+    public void accept(Streamable<Byte> stream) {
         if (fragmentState != FragmentState.EMPTY) {
             throw new IllegalStateException("fragmentState != FragmentState.EMPTY");
         }

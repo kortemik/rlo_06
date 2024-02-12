@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Consumer;
 
-public final class StructuredData implements Consumer<Stream>, Clearable {
+public final class StructuredData implements Consumer<Streamable<Byte>>, Clearable {
     /*
                                                                     |||||||||||||||||||||||||||||||||||
                                                                     vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvR
@@ -87,7 +87,7 @@ public final class StructuredData implements Consumer<Stream>, Clearable {
     }
 
     @Override
-    public void accept(Stream stream) {
+    public void accept(Streamable<Byte> stream) {
         if (fragmentState != FragmentState.EMPTY) {
             throw new IllegalStateException("fragmentState != FragmentState.EMPTY");
         }

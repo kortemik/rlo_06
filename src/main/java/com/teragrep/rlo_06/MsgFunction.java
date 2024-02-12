@@ -48,7 +48,7 @@ package com.teragrep.rlo_06;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 
-public final class MsgFunction implements BiFunction<Stream, ByteBuffer, ByteBuffer> {
+public final class MsgFunction implements BiFunction<Streamable<Byte>, ByteBuffer, ByteBuffer> {
     /*
                                                                                                vvvvvvvvvv
             <14>1 2014-06-20T09:14:07.12345+00:00 host01 systemd DEA MSG-01 [ID_A@1 u="3" e="t"][ID_B@2 n="9"] sigsegv\n
@@ -68,7 +68,7 @@ public final class MsgFunction implements BiFunction<Stream, ByteBuffer, ByteBuf
     }
 
     @Override
-    public ByteBuffer apply(Stream stream, ByteBuffer buffer) {
+    public ByteBuffer apply(Streamable<Byte> stream, ByteBuffer buffer) {
         int msg_current_left = 256 * 1024;
 
         byte oldByte = stream.get();

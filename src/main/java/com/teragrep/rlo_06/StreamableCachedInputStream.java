@@ -49,9 +49,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.function.Supplier;
 
-final class Stream implements Supplier<Byte> {
+public final class StreamableCachedInputStream implements Streamable<Byte> {
 
     private InputStream inputStream;
 
@@ -61,7 +60,7 @@ final class Stream implements Supplier<Byte> {
     private byte b;
 
 
-    Stream() {
+    public StreamableCachedInputStream() {
         this.inputStream = new ByteArrayInputStream(new byte[0]);
     }
 
@@ -71,11 +70,13 @@ final class Stream implements Supplier<Byte> {
         this.inputStream = inputStream;
     }
 
+    @Override
     public Byte get() {
         return b;
     }
 
-    boolean next() {
+    @Override
+    public boolean next() {
         if (pointer == bytesInBuffer) {
             int read;
             try {
