@@ -1,13 +1,12 @@
 package com.teragrep.rlo_06;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
-public class StreamableIterator implements Streamable<Byte> {
+final public class StreamableIterator implements Streamable<Byte> {
 
     private Iterator<Byte> iterator;
 
-    private Byte b;
+    private byte b;
 
     public StreamableIterator() {
         this(new IteratorStub<>());
