@@ -62,7 +62,7 @@ public class StreamableIteratorTest {
 
 
     @Test
-    void testNewParser() throws Exception {
+    void testIterator() throws Exception {
         String SYSLOG_MESSAGE = "<14>1 2014-06-20T09:14:07.123456+00:00 host01 systemd DEA MSG-01 [ID_A@1 u=\"\\\"3\" e=\"t\"][ID_B@2 n=\"9\"] sigsegv\n";
 
         byte[] messageBytes = SYSLOG_MESSAGE.getBytes(StandardCharsets.UTF_8);
@@ -128,7 +128,7 @@ public class StreamableIteratorTest {
         @Override
         public boolean next() {
             boolean rv = false;
-            if (position < limit) {
+            if (position < limit - 1) {
                 position++;
                 rv = true;
             }
