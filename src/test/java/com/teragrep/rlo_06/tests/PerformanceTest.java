@@ -47,12 +47,15 @@ package com.teragrep.rlo_06.tests;
 
 import com.teragrep.rlo_06.RFC5424Frame;
 import com.teragrep.rlo_06.StreamableCachedInputStream;
+import com.teragrep.rlo_06.StreamableIterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 public class PerformanceTest {
@@ -164,16 +167,22 @@ public class PerformanceTest {
             builder.append("]");
         }
         String SYSLOG_MESSAGE = "<14>1 2014-06-20T09:14:07.12345+00:00 host01 systemd DEA MSG-01 " + builder + " sigsegv\n";
-        InputStream inputStream = new ByteArrayInputStream(SYSLOG_MESSAGE.getBytes());
-        StreamableCachedInputStream stream = new StreamableCachedInputStream();
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(stream, true);
-        stream.setInputStream(inputStream);
+        byte[] messageBytes = SYSLOG_MESSAGE.getBytes(StandardCharsets.UTF_8);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(messageBytes.length);
+        buffer.put(messageBytes);
+        buffer.flip();
+
+        StreamableIteratorTest.ByteBufferIterator byteBufferIterator = new StreamableIteratorTest.ByteBufferIterator(buffer);
+
+        StreamableIterator streamableIterator = new StreamableIterator(byteBufferIterator);
+
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(streamableIterator, true);
 
         Instant instant1 = Instant.now();
         long count = 500;
         for (long i = 0; i < count; i++) {
             Assertions.assertTrue(rfc5424Frame.next());
-            inputStream.reset();
+            buffer.rewind();
         }
         Instant instant2 = Instant.now();
 

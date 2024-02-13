@@ -75,7 +75,7 @@ public class StreamableIteratorTest {
 
         ByteBufferIterator byteBufferIterator = new ByteBufferIterator(buffer);
 
-        StreamableIterator<Byte> streamableIterator = new StreamableIterator<>(byteBufferIterator);
+        StreamableIterator streamableIterator = new StreamableIterator(byteBufferIterator);
 
         RFC5424Frame rfc5424Frame = new RFC5424Frame(streamableIterator, true);
 
@@ -112,11 +112,11 @@ public class StreamableIteratorTest {
         });
     }
 
-    private static class ByteBufferIterator implements Iterator<Byte> {
+    static class ByteBufferIterator implements Iterator<Byte> {
 
         private final ByteBuffer buffer;
         ByteBufferIterator(ByteBuffer buffer) {
-            this.buffer = buffer.duplicate();
+            this.buffer = buffer;
         }
 
         @Override

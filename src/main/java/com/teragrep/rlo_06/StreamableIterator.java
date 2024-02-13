@@ -3,37 +3,35 @@ package com.teragrep.rlo_06;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class StreamableIterator<E> implements Streamable<E> {
+public class StreamableIterator implements Streamable<Byte> {
 
-    private Iterator<E> iterator;
+    private Iterator<Byte> iterator;
 
-    private final LinkedList<E> elementList;
+    private Byte b;
 
     public StreamableIterator() {
         this(new IteratorStub<>());
     }
 
-    public StreamableIterator(Iterator<E> iterator) {
+    public StreamableIterator(Iterator<Byte> iterator) {
         this.iterator = iterator;
-        this.elementList = new LinkedList<E>();
     }
 
     @Override
-    public E get() {
-        return elementList.peek();
+    public Byte get() {
+        return b;
     }
 
     @Override
     public boolean next() {
         boolean rv = iterator.hasNext();
         if (rv) {
-            elementList.clear();
-            elementList.push(iterator.next());
+            b = iterator.next();
         }
         return rv;
     }
 
-    public void setIterator(Iterator<E> iterator) {
+    public void setIterator(Iterator<Byte> iterator) {
         this.iterator = iterator;
     }
 
