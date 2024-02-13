@@ -47,7 +47,6 @@ package com.teragrep.rlo_06.tests;
 
 import com.teragrep.rlo_06.RFC5424Frame;
 import com.teragrep.rlo_06.StreamableCachedInputStream;
-import com.teragrep.rlo_06.StreamableIterator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -73,17 +72,13 @@ public class PerformanceTest {
 
         StreamableIteratorTest.ByteBufferIterator byteBufferIterator = new StreamableIteratorTest.ByteBufferIterator(buffer);
 
-        StreamableIterator streamableIterator = new StreamableIterator(byteBufferIterator);
-
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(streamableIterator, true);
-
-
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(byteBufferIterator, true);
 
         Instant instant1 = Instant.now();
         long count = 50000;
         for (long i = 0; i < count; i++) {
             Assertions.assertTrue(rfc5424Frame.next());
-            buffer.rewind();
+            byteBufferIterator.reset();
         }
         Instant instant2 = Instant.now();
         long msgsize = (count * SYSLOG_MESSAGE.length())/1024/1024;
@@ -180,15 +175,13 @@ public class PerformanceTest {
 
         StreamableIteratorTest.ByteBufferIterator byteBufferIterator = new StreamableIteratorTest.ByteBufferIterator(buffer);
 
-        StreamableIterator streamableIterator = new StreamableIterator(byteBufferIterator);
-
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(streamableIterator, true);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(byteBufferIterator, true);
 
         Instant instant1 = Instant.now();
         long count = 500;
         for (long i = 0; i < count; i++) {
             Assertions.assertTrue(rfc5424Frame.next());
-            buffer.rewind();
+            byteBufferIterator.reset();
         }
         Instant instant2 = Instant.now();
 

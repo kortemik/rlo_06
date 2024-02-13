@@ -45,10 +45,7 @@
  */
 package com.teragrep.rlo_06.tests;
 
-import com.teragrep.rlo_06.RFC5424Frame;
-import com.teragrep.rlo_06.SDVector;
-import com.teragrep.rlo_06.StreamableCachedInputStream;
-import com.teragrep.rlo_06.StreamableIterator;
+import com.teragrep.rlo_06.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -75,9 +72,7 @@ public class StreamableIteratorTest {
 
         ByteBufferIterator byteBufferIterator = new ByteBufferIterator(buffer);
 
-        StreamableIterator streamableIterator = new StreamableIterator(byteBufferIterator);
-
-        RFC5424Frame rfc5424Frame = new RFC5424Frame(streamableIterator, true);
+        RFC5424Frame rfc5424Frame = new RFC5424Frame(byteBufferIterator, true);
 
         assertTrue(rfc5424Frame.next());
         
@@ -112,21 +107,36 @@ public class StreamableIteratorTest {
         });
     }
 
-    static class ByteBufferIterator implements Iterator<Byte> {
+    static class ByteBufferIterator implements Streamable<Byte> {
 
         private final ByteBuffer buffer;
+
+        private final int limit;
+        private int position;
         ByteBufferIterator(ByteBuffer buffer) {
             this.buffer = buffer;
+            this.limit = buffer.limit();
+
+            this.position = -1;
         }
 
         @Override
-        public boolean hasNext() {
-            return buffer.hasRemaining();
+        public Byte get() {
+            return buffer.get(position);
         }
 
         @Override
-        public Byte next() {
-            return buffer.get();
+        public boolean next() {
+            boolean rv = false;
+            if (position < limit) {
+                position++;
+                rv = true;
+            }
+            return rv;
+        }
+
+        public void reset() {
+            this.position = -1;
         }
     }
 }
