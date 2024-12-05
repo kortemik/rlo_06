@@ -43,57 +43,52 @@
  * Teragrep, the applicable Commercial License may apply to this file if you as
  * a licensee so wish it.
  */
-package com.teragrep.new_rlo_06.clocks;
+package com.teragrep.new_rlo_06;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-public class CharClock implements Clock<List<ByteBuffer>> {
+public class TimestampBufferedImpl implements Timestamp {
 
-    private final Consumer<ByteBuffer> nextClock;
-    private final char character;
-    private boolean isComplete;
-    private final List<ByteBuffer> buffers;
+    private final List<ByteBuffer> timestampBuffers;
+    private final List<ByteBuffer> spaceBuffers;
 
-    public CharClock(Consumer<ByteBuffer> nextClock, final char character) {
-        this.nextClock = nextClock;
-        this.character = character;
-        this.isComplete = false;
-        this.buffers = new LinkedList<>();
+    public TimestampBufferedImpl(List<ByteBuffer> timestampBuffers, List<ByteBuffer> spaceBuffers) {
+        this.timestampBuffers = timestampBuffers;
+        this.spaceBuffers = spaceBuffers;
     }
 
     @Override
-    public void accept(ByteBuffer input) {
-        if (!isComplete) {
-            ByteBuffer slice = input.slice();
-
-            if (input.hasRemaining()) {
-                byte b = input.get();
-                if (b == character) {
-                    slice.limit(1);
-                    isComplete = true;
-                }
-                else {
-                    throw new CharParseException("expected '" + character + "'");
-                }
-            }
-
-            // ignore empty slices
-            if (slice.limit() > 0) {
-                buffers.add(slice);
-            }
-        }
-
-        if (isComplete) {
-            nextClock.accept(input);
-        }
+    public byte[] toBytes() {
+        return new ElementImpl(timestampBuffers).toBytes();
     }
 
     @Override
-    public List<ByteBuffer> get() {
-        return buffers;
+    public int toInt() {
+        return new ElementImpl(this.timestampBuffers).toInt();
     }
 
+    @Override
+    public long size() {
+        return new ElementImpl(timestampBuffers).size();
+    }
+
+    @Override
+    public List<ByteBuffer> toEncoded() {
+        List<ByteBuffer> result = new ArrayList<>(timestampBuffers.size() + spaceBuffers.size());
+        result.addAll(timestampBuffers);
+        result.addAll(spaceBuffers);
+        return result;
+    }
+
+    @Override
+    public boolean isStub() {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return new ElementImpl(timestampBuffers).toString();
+    }
 }

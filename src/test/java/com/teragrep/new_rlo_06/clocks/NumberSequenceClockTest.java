@@ -59,7 +59,7 @@ public class NumberSequenceClockTest {
         StringInput input = new StringInput("059>");
         ByteBuffer[] buffers = input.asBuffers(1);
 
-        NumberSequenceClock clock = new NumberSequenceClock(new FakeClock(), 3);
+        NumberSequenceClock clock = new NumberSequenceClock(new NoOpClock(), 3);
 
         clock.accept(buffers[0]);
         Assertions.assertTrue(buffers[0].hasRemaining());
@@ -75,7 +75,7 @@ public class NumberSequenceClockTest {
         StringInput input = new StringInput("059>");
         ByteBuffer[] buffers = input.asBuffers(4);
 
-        NumberSequenceClock clock = new NumberSequenceClock(new FakeClock(), 3);
+        NumberSequenceClock clock = new NumberSequenceClock(new NoOpClock(), 3);
 
         clock.accept(buffers[0]);
         Assertions.assertFalse(buffers[0].hasRemaining());
@@ -100,7 +100,7 @@ public class NumberSequenceClockTest {
     public void testTooManyNumbers() {
         StringInput input = new StringInput("0590");
         ByteBuffer[] buffers = input.asBuffers(1);
-        NumberSequenceClock clock = new NumberSequenceClock(new FakeClock(), 3);
+        NumberSequenceClock clock = new NumberSequenceClock(new NoOpClock(), 3);
 
         Exception exception = Assertions
                 .assertThrows(NumberSequenceParseException.class, () -> clock.accept(buffers[0]));
@@ -112,7 +112,7 @@ public class NumberSequenceClockTest {
     public void testTooFewNumbers() {
         StringInput input = new StringInput(">");
         ByteBuffer[] buffers = input.asBuffers(1);
-        NumberSequenceClock clock = new NumberSequenceClock(new FakeClock(), 3);
+        NumberSequenceClock clock = new NumberSequenceClock(new NoOpClock(), 3);
 
         Exception exception = Assertions
                 .assertThrows(NumberSequenceParseException.class, () -> clock.accept(buffers[0]));

@@ -47,17 +47,17 @@ package com.teragrep.new_rlo_06.clocks;
 
 import com.teragrep.rlo_06.ParseException;
 
-public class CharacterParseException extends ParseException {
+public class CharParseException extends ParseException {
 
-    public CharacterParseException(String message, Throwable cause) {
+    public CharParseException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public CharacterParseException(String message) {
+    public CharParseException(String message) {
         super(message);
     }
 
-    public CharacterParseException(Throwable cause) {
+    public CharParseException(Throwable cause) {
         super(cause);
     }
 }

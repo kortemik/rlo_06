@@ -61,7 +61,7 @@ public class VersionClockTest {
         StringInput input = new StringInput("1 X");
         ByteBuffer[] buffers = input.asBuffers(1);
 
-        VersionClock clock = new VersionClock(new FakeClock());
+        VersionClock clock = new VersionClock(new NoOpClock());
 
         clock.accept(buffers[0]);
         Assertions.assertTrue(buffers[0].hasRemaining());
@@ -78,7 +78,7 @@ public class VersionClockTest {
         StringInput input = new StringInput("1 X");
         ByteBuffer[] buffers = input.asBuffers(3);
 
-        VersionClock clock = new VersionClock(new FakeClock());
+        VersionClock clock = new VersionClock(new NoOpClock());
 
         clock.accept(buffers[0]);
         Assertions.assertFalse(buffers[0].hasRemaining());
@@ -102,7 +102,7 @@ public class VersionClockTest {
         StringInput input = new StringInput("@");
         ByteBuffer[] buffers = input.asBuffers(1);
 
-        VersionClock clock = new VersionClock(new FakeClock());
+        VersionClock clock = new VersionClock(new NoOpClock());
 
         NumberSequenceParseException exception = Assertions.assertThrows(NumberSequenceParseException.class, () -> {
             clock.accept(buffers[0]);
@@ -116,9 +116,9 @@ public class VersionClockTest {
         StringInput input = new StringInput("1@");
         ByteBuffer[] buffers = input.asBuffers(1);
 
-        VersionClock clock = new VersionClock(new FakeClock());
+        VersionClock clock = new VersionClock(new NoOpClock());
 
-        CharacterParseException exception = Assertions.assertThrows(CharacterParseException.class, () -> {
+        CharParseException exception = Assertions.assertThrows(CharParseException.class, () -> {
             clock.accept(buffers[0]);
         });
         Assertions.assertEquals("expected ' '", exception.getMessage());

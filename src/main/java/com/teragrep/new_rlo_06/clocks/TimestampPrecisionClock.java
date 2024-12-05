@@ -52,18 +52,39 @@ import java.util.function.Consumer;
 
 public class TimestampPrecisionClock implements Clock<List<ByteBuffer>> {
 
+    private final Consumer<ByteBuffer> nextClock;
+
     private final Clock<List<ByteBuffer>> dotClock;
     private final NumberSequenceClock numbersClock;
+    private boolean isPresent;
 
     public TimestampPrecisionClock(Consumer<ByteBuffer> nextClock) {
+        this.nextClock = nextClock;
         this.numbersClock = new NumberSequenceClock(nextClock, 6, 1);
-        this.dotClock = new CharClock(this.numbersClock, '.');
+        this.dotClock = new CharClock(new NoOpClock(), '.');
+
+        this.isPresent = true;
     }
 
     @Override
     public void accept(ByteBuffer input) {
-        // TODO detect if precision is present here?
-        dotClock.accept(input);
+        ByteBuffer copy = input.duplicate(); // if dotClock does not accept, it still consumes
+        try {
+            dotClock.accept(copy);
+            input.position(copy.position()); // did not throw, so seek to appropriate location
+        }
+        catch (CharParseException e) {
+            isPresent = false;
+        }
+
+        if (input.hasRemaining()) {
+            if (isPresent) {
+                numbersClock.accept(input);
+            }
+            else {
+                nextClock.accept(input);
+            }
+        }
     }
 
     @Override

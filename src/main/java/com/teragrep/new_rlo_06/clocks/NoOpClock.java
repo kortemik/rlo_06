@@ -46,54 +46,16 @@
 package com.teragrep.new_rlo_06.clocks;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Consumer;
 
-public class CharClock implements Clock<List<ByteBuffer>> {
+public class NoOpClock implements Clock<Void> {
 
-    private final Consumer<ByteBuffer> nextClock;
-    private final char character;
-    private boolean isComplete;
-    private final List<ByteBuffer> buffers;
+    @Override
+    public void accept(ByteBuffer byteBuffer) {
 
-    public CharClock(Consumer<ByteBuffer> nextClock, final char character) {
-        this.nextClock = nextClock;
-        this.character = character;
-        this.isComplete = false;
-        this.buffers = new LinkedList<>();
     }
 
     @Override
-    public void accept(ByteBuffer input) {
-        if (!isComplete) {
-            ByteBuffer slice = input.slice();
-
-            if (input.hasRemaining()) {
-                byte b = input.get();
-                if (b == character) {
-                    slice.limit(1);
-                    isComplete = true;
-                }
-                else {
-                    throw new CharParseException("expected '" + character + "'");
-                }
-            }
-
-            // ignore empty slices
-            if (slice.limit() > 0) {
-                buffers.add(slice);
-            }
-        }
-
-        if (isComplete) {
-            nextClock.accept(input);
-        }
+    public Void get() {
+        throw new UnsupportedOperationException("NoOpClock does not support get().");
     }
-
-    @Override
-    public List<ByteBuffer> get() {
-        return buffers;
-    }
-
 }

@@ -56,7 +56,7 @@ public class PriorityClockTest {
 
     @Test
     public void testClock() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
 
         StringInput input = new StringInput("<123>");
 
@@ -74,7 +74,7 @@ public class PriorityClockTest {
 
     @Test
     void testFailOversizeOneBuffer() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<1234>");
         ByteBuffer[] buffers = input.asBuffers();
 
@@ -87,7 +87,7 @@ public class PriorityClockTest {
 
     @Test
     void testFailOversizeSixBuffers() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<1234>");
         ByteBuffer[] buffers = input.asBuffers(6);
 
@@ -114,7 +114,7 @@ public class PriorityClockTest {
 
     @Test
     public void testFailNoContentOneBuffer() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<>");
         ByteBuffer[] buffers = input.asBuffers();
 
@@ -127,7 +127,7 @@ public class PriorityClockTest {
 
     @Test
     public void testFailNoContentTwoBuffers() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<>");
         ByteBuffer[] buffers = input.asBuffers(2);
 
@@ -143,11 +143,11 @@ public class PriorityClockTest {
 
     @Test
     void testFailStart() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("123>");
         ByteBuffer[] buffers = input.asBuffers();
 
-        CharacterParseException exception = Assertions.assertThrows(CharacterParseException.class, () -> {
+        CharParseException exception = Assertions.assertThrows(CharParseException.class, () -> {
             priorityClock.accept(buffers[0]);
         });
 
@@ -156,7 +156,7 @@ public class PriorityClockTest {
 
     @Test
     void testFailDoubleStart() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<<3>");
         ByteBuffer[] buffers = input.asBuffers();
 
@@ -169,7 +169,7 @@ public class PriorityClockTest {
 
     @Test
     void testFailMultiBuffer() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<<3>");
         ByteBuffer[] buffers = input.asBuffers(4);
 
@@ -185,7 +185,7 @@ public class PriorityClockTest {
 
     @Test
     void testTerminationSingleBuffer() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<3>X");
         ByteBuffer[] buffers = input.asBuffers(1);
 
@@ -199,7 +199,7 @@ public class PriorityClockTest {
 
     @Test
     void testTerminationFourBuffers() {
-        PriorityClock priorityClock = new PriorityClock(new FakeClock());
+        PriorityClock priorityClock = new PriorityClock(new NoOpClock());
         StringInput input = new StringInput("<3>X");
         ByteBuffer[] buffers = input.asBuffers(4);
 

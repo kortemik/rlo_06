@@ -61,7 +61,7 @@ public class CharClockTest {
         StringInput input = new StringInput("<");
         ByteBuffer[] buffers = input.asBuffers(1);
 
-        CharClock clock = new CharClock(new FakeClock(), '<');
+        CharClock clock = new CharClock(new NoOpClock(), '<');
 
         clock.accept(buffers[0]);
         Assertions.assertFalse(buffers[0].hasRemaining());
@@ -74,7 +74,7 @@ public class CharClockTest {
         StringInput input = new StringInput("<X");
         ByteBuffer[] buffers = input.asBuffers(1);
 
-        CharClock clock = new CharClock(new FakeClock(), '<');
+        CharClock clock = new CharClock(new NoOpClock(), '<');
         clock.accept(buffers[0]);
         Assertions.assertTrue(buffers[0].hasRemaining());
 
@@ -91,7 +91,7 @@ public class CharClockTest {
         StringInput input = new StringInput("<X");
         ByteBuffer[] buffers = input.asBuffers(2);
 
-        CharClock clock = new CharClock(new FakeClock(), '<');
+        CharClock clock = new CharClock(new NoOpClock(), '<');
 
         clock.accept(buffers[0]);
         Assertions.assertFalse(buffers[0].hasRemaining());
@@ -112,9 +112,9 @@ public class CharClockTest {
         StringInput input = new StringInput("@");
         ByteBuffer[] buffers = input.asBuffers(1);
 
-        CharClock clock = new CharClock(new FakeClock(), '<');
+        CharClock clock = new CharClock(new NoOpClock(), '<');
 
-        CharacterParseException exception = Assertions.assertThrows(CharacterParseException.class, () -> {
+        CharParseException exception = Assertions.assertThrows(CharParseException.class, () -> {
             clock.accept(buffers[0]);
         });
         Assertions.assertEquals("expected '<'", exception.getMessage());

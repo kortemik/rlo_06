@@ -46,13 +46,17 @@
 package com.teragrep.new_rlo_06.clocks;
 
 import com.teragrep.new_rlo_06.Timestamp;
+import com.teragrep.new_rlo_06.TimestampBufferedImpl;
 
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class TimestampClock implements Clock<Timestamp> {
 
     // TODO tzinfo
+    private final TimestampTimeZoneClock timestampTimeZoneClock;
     private final TimestampPrecisionClock timestampPrecisionClock;
 
     private final NumberSequenceClock secondClock;
@@ -67,8 +71,12 @@ public class TimestampClock implements Clock<Timestamp> {
     private final CharClock yearDashClock;
     private final NumberSequenceClock yearClock;
 
+    private final CharClock spaceClock;
+
     public TimestampClock(Consumer<ByteBuffer> nextClock) {
-        this.timestampPrecisionClock = new TimestampPrecisionClock(nextClock);
+        this.spaceClock = new CharClock(nextClock, ' ');
+        this.timestampTimeZoneClock = new TimestampTimeZoneClock(this.spaceClock);
+        this.timestampPrecisionClock = new TimestampPrecisionClock(this.timestampTimeZoneClock);
 
         this.secondClock = new NumberSequenceClock(this.timestampPrecisionClock, 2, 2);
         this.minuteColonClock = new CharClock(this.secondClock, ':');
@@ -91,6 +99,22 @@ public class TimestampClock implements Clock<Timestamp> {
 
     @Override
     public Timestamp get() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<ByteBuffer> timestampBuffers = new LinkedList<>();
+        timestampBuffers.addAll(yearClock.get());
+        timestampBuffers.addAll(yearDashClock.get());
+        timestampBuffers.addAll(monthClock.get());
+        timestampBuffers.addAll(monthDashClock.get());
+        timestampBuffers.addAll(dayClock.get());
+        timestampBuffers.addAll(TClock.get());
+        timestampBuffers.addAll(hourClock.get());
+        timestampBuffers.addAll(hourColonClock.get());
+        timestampBuffers.addAll(minuteClock.get());
+        timestampBuffers.addAll(minuteColonClock.get());
+        timestampBuffers.addAll(secondClock.get());
+        timestampBuffers.addAll(timestampPrecisionClock.get());
+
+        timestampBuffers.addAll(timestampTimeZoneClock.get());
+
+        return new TimestampBufferedImpl(timestampBuffers, spaceClock.get());
     }
 }

@@ -45,17 +45,24 @@
  */
 package com.teragrep.new_rlo_06.clocks;
 
+import com.teragrep.new_rlo_06.inputs.StringInput;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.nio.ByteBuffer;
 
-public class FakeClock implements Clock<Void> {
+public class TimestampClockTest {
 
-    @Override
-    public void accept(ByteBuffer byteBuffer) {
+    @Test
+    public void testTimestampClock() {
+        String tsWithPrecision = "1999-11-22T12:34:56.654321";
+        StringInput input = new StringInput(tsWithPrecision);
+        ByteBuffer[] buffers = input.asBuffers();
 
-    }
+        TimestampClock timestampClock = new TimestampClock(new NoOpClock());
 
-    @Override
-    public Void get() {
-        throw new UnsupportedOperationException();
+        timestampClock.accept(buffers[0]);
+
+        Assertions.assertEquals(tsWithPrecision, timestampClock.get().toString());
     }
 }
