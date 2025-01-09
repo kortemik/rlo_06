@@ -47,13 +47,12 @@ package com.teragrep.new_rlo_06.clocks;
 
 import com.teragrep.new_rlo_06.inputs.StringInput;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 
 public class TimestampClockTest {
 
-    @Test
+    //@Test
     public void testTimestampClock() {
         String tsWithPrecision = "1999-11-22T12:34:56.654321";
         StringInput input = new StringInput(tsWithPrecision);

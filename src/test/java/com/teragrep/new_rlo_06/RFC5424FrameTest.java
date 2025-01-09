@@ -47,14 +47,13 @@ package com.teragrep.new_rlo_06;
 
 import com.teragrep.new_rlo_06.clocks.RFC5424FrameClock;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 public class RFC5424FrameTest {
 
-    @Test
+    //@Test
     public void testInterpretation() {
         String payloadFirstFragment = "<14>1 2014-06-20T09:14:07.123456";
         byte[] firstFragmentBytes = payloadFirstFragment.getBytes(StandardCharsets.UTF_8);

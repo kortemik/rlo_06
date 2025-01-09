@@ -47,7 +47,6 @@ package com.teragrep.new_rlo_06.clocks;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class TimestampTimeZoneClock implements Clock<List<ByteBuffer>> {
