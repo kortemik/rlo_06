@@ -26,9 +26,8 @@ public class NumberSequenceClock implements Clock<Fragment> {
         while (input.hasRemaining()) {
             byte b = input.get();
             bytesRead++;
-            checkOverSize(b, bufferSliceList);
-
-            if (b >= '0' && b <= '9') {
+            checkOverSize(bytesRead, bufferSliceList);
+            if (b < '0' || b > '9') {
                 slice.limit(bytesRead);
                 complete = true;
                 break;
@@ -52,7 +51,7 @@ public class NumberSequenceClock implements Clock<Fragment> {
     private void checkOverSize(int bytesRead, LinkedList<ByteBuffer> bufferSliceList) {
         long currentLength = 0;
         for (ByteBuffer slice : bufferSliceList) {
-            currentLength = currentLength + ((ByteBuffer) slice).limit();
+            currentLength = currentLength + slice.limit();
         }
 
         currentLength = currentLength + bytesRead;

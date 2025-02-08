@@ -56,7 +56,7 @@ public class ByteFragmentClock implements Clock<Fragment> {
     private void checkOverSize(int bytesRead, LinkedList<ByteBuffer> bufferSliceList) {
         long currentLength = 0;
         for (ByteBuffer slice : bufferSliceList) {
-            currentLength = currentLength + ((ByteBuffer) slice).limit();
+            currentLength = currentLength + slice.limit();
         }
 
         currentLength = currentLength + bytesRead;
