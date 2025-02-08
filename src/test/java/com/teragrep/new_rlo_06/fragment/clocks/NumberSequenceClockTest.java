@@ -2,6 +2,7 @@ package com.teragrep.new_rlo_06.fragment.clocks;
 
 import com.teragrep.new_rlo_06.fragment.Fragment;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -19,15 +20,28 @@ public class NumberSequenceClockTest {
     @Test
     public void testParse() {
         NumberSequenceClock numberSequenceClock = new NumberSequenceClock(5);
-        Fragment numberFragment = numberSequenceClock.submit(ByteBuffer.wrap("12345x".getBytes(StandardCharsets.US_ASCII)));
+        ByteBuffer inputBuffer = ByteBuffer.wrap("12345x".getBytes(StandardCharsets.US_ASCII));
+        Fragment numberFragment = numberSequenceClock.submit(inputBuffer);
 
         Assertions.assertFalse(numberFragment.isStub());
         Assertions.assertEquals("12345", numberFragment.toString());
         Assertions.assertEquals(12345, numberFragment.toInt());
+
+        Assertions.assertTrue(inputBuffer.hasRemaining());
+        Assertions.assertEquals((byte)'x', inputBuffer.get());
+
+    }
+
+    @Disabled
+    @Test
+    public void testMultipleBuffers() {
+
     }
 
     @Test
     public void testLengthExceeded() {
-
+        NumberSequenceClock numberSequenceClock = new NumberSequenceClock(1);
+        ByteBuffer inputBuffer = ByteBuffer.wrap("12".getBytes(StandardCharsets.US_ASCII));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> numberSequenceClock.submit(inputBuffer));
     }
 }

@@ -15,7 +15,7 @@ public class NumberSequenceClock implements Clock<Fragment> {
 
     public NumberSequenceClock(int maximumLength) {
         this.bufferSliceList = new LinkedList<>();
-        this.maximumLength = maximumLength;
+        this.maximumLength = maximumLength; // for next character
     }
 
     public Fragment submit(ByteBuffer input) {
@@ -28,7 +28,8 @@ public class NumberSequenceClock implements Clock<Fragment> {
             bytesRead++;
             checkOverSize(bytesRead, bufferSliceList);
             if (b < '0' || b > '9') {
-                slice.limit(bytesRead);
+                input.position(bytesRead - 1); // seek one backwards
+                slice.limit(bytesRead - 1); // mask the non-number
                 complete = true;
                 break;
             }

@@ -3,6 +3,7 @@ package com.teragrep.new_rlo_06.fragment.clocks;
 import com.teragrep.new_rlo_06.fragment.Fragment;
 import com.teragrep.new_rlo_06.fragment.Writeable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
@@ -38,6 +39,12 @@ public class ByteFragmentClockTest {
 
         // verify original is not modified by the writable access
         Assertions.assertEquals(7, byteFragment.toInt());
+    }
+
+    @Disabled
+    @Test
+    public void testMultipleBuffers() {
+
     }
 
     @Test
