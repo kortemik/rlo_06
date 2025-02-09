@@ -55,7 +55,7 @@ import java.nio.charset.StandardCharsets;
 public class FragmentTest {
 
     @Test
-    public void testFragmentAssemblyViaCommandClock() {
+    public void testFragmentAssemblyViaByteFragmentClock() {
         ByteFragmentClock byteFragmentClock = new ByteFragmentClock((byte)'5');
         Fragment fragmentStub = byteFragmentClock.submit(ByteBuffer.allocateDirect(0));
         Assertions.assertTrue(fragmentStub.isStub());
