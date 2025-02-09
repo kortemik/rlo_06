@@ -1,5 +1,6 @@
 package com.teragrep.new_rlo_06.fragment.clocks;
 
+import com.teragrep.new_rlo_06.Clock;
 import com.teragrep.new_rlo_06.fragment.Fragment;
 import com.teragrep.new_rlo_06.fragment.FragmentImpl;
 import com.teragrep.new_rlo_06.fragment.FragmentStub;

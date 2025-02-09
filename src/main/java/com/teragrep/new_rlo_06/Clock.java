@@ -1,4 +1,4 @@
-package com.teragrep.new_rlo_06.fragment.clocks;
+package com.teragrep.new_rlo_06;
 
 import java.nio.ByteBuffer;
 

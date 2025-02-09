@@ -1,14 +1,15 @@
-package com.teragrep.new_rlo_06.fragment.clocks;
+package com.teragrep.new_rlo_06.elements.clocks;
 
+import com.teragrep.new_rlo_06.Clock;
 import com.teragrep.new_rlo_06.elements.Priority;
 import com.teragrep.new_rlo_06.elements.PriorityImpl;
 import com.teragrep.new_rlo_06.elements.PriorityStub;
 import com.teragrep.new_rlo_06.fragment.Fragment;
 import com.teragrep.new_rlo_06.fragment.FragmentStub;
+import com.teragrep.new_rlo_06.fragment.clocks.ByteFragmentClock;
+import com.teragrep.new_rlo_06.fragment.clocks.NumberSequenceClock;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.List;
 
 public class PriorityClock implements Clock<Priority> {
     private static final FragmentStub fragmentStub = new FragmentStub();
@@ -18,9 +19,9 @@ public class PriorityClock implements Clock<Priority> {
     private final NumberSequenceClock numberSequenceClock;
     private final ByteFragmentClock priorityCloseClock;
 
-    private final List<Fragment> openFragment;
-    private final List<Fragment> numberSequenceFragment;
-    private final List<Fragment> closeFragment;
+    private Fragment openFragment;
+    private Fragment numberSequenceFragment;
+    private Fragment closeFragment;
 
 
     public PriorityClock() {
@@ -28,32 +29,35 @@ public class PriorityClock implements Clock<Priority> {
         this.numberSequenceClock = new NumberSequenceClock(3);
         this.priorityCloseClock = new ByteFragmentClock((byte)'>');
 
-        this.openFragment = Collections.singletonList(fragmentStub);
-        this.numberSequenceFragment = Collections.singletonList(fragmentStub);
-        this.closeFragment = Collections.singletonList(fragmentStub);
+        this.openFragment = fragmentStub;
+        this.numberSequenceFragment = fragmentStub;
+        this.closeFragment = fragmentStub;
     }
 
     public Priority submit(ByteBuffer input) {
         Priority priority = priorityStub;
-        if (openFragment.get(0).isStub()) {
-            openFragment.set(0,priorityOpenClock.submit(input));
+        if (openFragment.isStub()) {
+            openFragment = priorityOpenClock.submit(input);
         }
-        else if (numberSequenceFragment.get(0).isStub()) {
-            numberSequenceFragment.set(0, numberSequenceClock.submit(input));
+
+        if (numberSequenceFragment.isStub()) {
+            numberSequenceFragment = numberSequenceClock.submit(input);
         }
-        else if (closeFragment.get(0).isStub()) {
-            closeFragment.set(0, priorityCloseClock.submit(input));
+
+        if (closeFragment.isStub()) {
+            closeFragment = priorityCloseClock.submit(input);
         }
-        else {
-            if (numberSequenceFragment.get(0).size() < 1) {
+
+        if (!closeFragment.isStub()) {
+            if (numberSequenceFragment.size() < 1) {
                 throw new IllegalArgumentException("Priority must contain at least one number");
             }
 
-            priority = new PriorityImpl(openFragment.get(0),  numberSequenceFragment.get(0), closeFragment.get(0));
+            priority = new PriorityImpl(openFragment,  numberSequenceFragment, closeFragment);
 
-            openFragment.set(0, fragmentStub);
-            numberSequenceFragment.set(0, fragmentStub);
-            closeFragment.set(0, fragmentStub);
+            openFragment = fragmentStub;
+            numberSequenceFragment = fragmentStub;
+            closeFragment = fragmentStub;
         }
         return priority;
     }

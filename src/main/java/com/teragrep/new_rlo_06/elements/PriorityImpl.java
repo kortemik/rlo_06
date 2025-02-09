@@ -18,4 +18,14 @@ public class PriorityImpl implements Priority {
     public boolean isStub() {
         return false;
     }
+
+    @Override
+    public int severity() {
+        return numberSequenceFragment.toInt() & 7;
+    }
+
+    @Override
+    public int facility() {
+        return numberSequenceFragment.toInt() >> 3;
+    }
 }
