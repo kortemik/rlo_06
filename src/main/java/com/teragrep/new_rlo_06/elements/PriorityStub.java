@@ -10,12 +10,12 @@ public class PriorityStub implements Priority {
     }
 
     @Override
-    public int severity() {
+    public Severity severity() {
         throw new UnsupportedOperationException("Stub object does not implement severity()");
     }
 
     @Override
-    public int facility() {
+    public Facility facility() {
         throw new UnsupportedOperationException("Stub object does not implement facility()");
     }
 }
