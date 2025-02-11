@@ -47,6 +47,7 @@ package com.teragrep.new_rlo_06;
 
 import com.teragrep.new_rlo_06.elements.Message;
 import com.teragrep.new_rlo_06.elements.Priority;
+import com.teragrep.new_rlo_06.elements.Space;
 import com.teragrep.new_rlo_06.elements.Version;
 
 public class FrameImpl implements Frame {
@@ -55,7 +56,7 @@ public class FrameImpl implements Frame {
     private final Message message;
     private final Version version;
 
-    public FrameImpl(Priority priority, Version version, Message message) {
+    public FrameImpl(Priority priority, Version version, Space versionSpace, Message message) {
         this.priority = priority;
         this.version = version;
         this.message = message;

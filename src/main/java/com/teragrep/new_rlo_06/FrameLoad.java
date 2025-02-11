@@ -47,6 +47,7 @@ package com.teragrep.new_rlo_06;
 
 import com.teragrep.new_rlo_06.elements.*;
 import com.teragrep.new_rlo_06.elements.clocks.PriorityClock;
+import com.teragrep.new_rlo_06.elements.clocks.SpaceClock;
 import com.teragrep.new_rlo_06.elements.clocks.VersionClock;
 import com.teragrep.new_rlo_06.elements.loads.MessageLoad;
 
@@ -63,9 +64,11 @@ public class FrameLoad implements Loadable<Frame> {
     private static final FrameStub frameStub = new FrameStub();
     private static final PriorityStub priorityStub = new PriorityStub();
     private static final VersionStub versionStub = new VersionStub();
+    private static final SpaceStub spaceStub = new SpaceStub();
 
     private final PriorityClock priorityClock = new PriorityClock();
     private final VersionClock versionClock = new VersionClock();
+    private final SpaceClock spaceClock = new SpaceClock();
     private final MessageLoad messageLoad = new MessageLoad();
 
     @Override
@@ -92,10 +95,18 @@ public class FrameLoad implements Loadable<Frame> {
             }
         }
 
+        Space versionSpace = spaceStub;
+        while (versionSpace.isStub()) {
+            ByteBuffer input = buffers.pop();
+            versionSpace = spaceClock.submit(input);
+            if (input.hasRemaining()) {
+                buffers.push(input);
+            }
+        }
 
         // message loads them all
         Message message = messageLoad.load(buffers.toArray(new ByteBuffer[0]));
 
-        return new FrameImpl(priority, version, message);
+        return new FrameImpl(priority, version, versionSpace, message);
     }
 }
