@@ -73,8 +73,8 @@ public class PriorityClockTest {
         priority = clock.submit(ByteBuffer.wrap(">".getBytes(StandardCharsets.US_ASCII)));
         Assertions.assertFalse(priority.isStub());
 
-        Assertions.assertEquals(15, priority.facility()); // clock daemon
-        Assertions.assertEquals(3, priority.severity()); // error
+        Assertions.assertEquals(15, priority.facility().value()); // clock daemon
+        Assertions.assertEquals(3, priority.severity().value()); // error
 
         priority = clock.submit(ByteBuffer.wrap("<".getBytes(StandardCharsets.US_ASCII)));
         Assertions.assertTrue(priority.isStub());
