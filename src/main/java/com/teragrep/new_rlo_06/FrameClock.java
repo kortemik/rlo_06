@@ -5,25 +5,30 @@ import com.teragrep.new_rlo_06.elements.PriorityStub;
 import com.teragrep.new_rlo_06.elements.clocks.PriorityClock;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
-import java.util.List;
 
+/**
+ * Encapsulates data from ByteBuffers into a Frame until there is a newline in the data
+ */
 public class FrameClock implements Clock<Frame>{
     private static final FrameStub frameStub = new FrameStub();
 
-    private final List<Priority> priority;
+    private static final PriorityStub priorityStub = new PriorityStub();
+
+    private Priority priority;
 
     public FrameClock() {
         this(new PriorityClock());
     }
 
     public FrameClock(PriorityClock priorityClock) {
-
-        this.priority = Collections.singletonList(new PriorityStub());
+        this.priority = priorityStub;
     }
 
     @Override
     public Frame submit(ByteBuffer input) {
+        if (true) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
         return frameStub;
     }
 }

@@ -15,4 +15,8 @@ public class FacilityImpl implements Facility {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return FacilityName.fromCode(value());
+    }
 }

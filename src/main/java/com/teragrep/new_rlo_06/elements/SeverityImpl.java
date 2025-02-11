@@ -14,4 +14,9 @@ public class SeverityImpl implements Severity {
         }
         return value;
     }
+
+    @Override
+    public String toString() {
+        return SeverityName.fromCode(value());
+    }
 }

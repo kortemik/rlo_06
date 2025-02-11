@@ -1,5 +1,7 @@
 package com.teragrep.new_rlo_06.elements;
 
+// TODO consider unifying FacilityImpl and this
+
 public enum FacilityName implements Facility{
     KERN(0, "KERN"),
     USER(1, "USER"),

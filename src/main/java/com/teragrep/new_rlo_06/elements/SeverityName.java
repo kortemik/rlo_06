@@ -1,5 +1,7 @@
 package com.teragrep.new_rlo_06.elements;
 
+// TODO consider unifying SeverityImpl and this
+
 public enum SeverityName implements Severity {
     EMERGENCY(0, "EMERGENCY"),
     ALERT(1, "ALERT"),
