@@ -19,8 +19,10 @@ public class NumberSequenceClockTest {
 
     @Test
     public void testParse() {
-        NumberSequenceClock numberSequenceClock = new NumberSequenceClock(5);
         ByteBuffer inputBuffer = ByteBuffer.wrap("12345x".getBytes(StandardCharsets.US_ASCII));
+
+        NumberSequenceClock numberSequenceClock = new NumberSequenceClock(5);
+
         Fragment numberFragment = numberSequenceClock.submit(inputBuffer);
 
         Assertions.assertFalse(numberFragment.isStub());
@@ -29,7 +31,24 @@ public class NumberSequenceClockTest {
 
         Assertions.assertTrue(inputBuffer.hasRemaining());
         Assertions.assertEquals((byte)'x', inputBuffer.get());
+    }
 
+    @Test
+    public void testPreReadBuffer() {
+        ByteBuffer inputBuffer = ByteBuffer.wrap("n54321x".getBytes(StandardCharsets.US_ASCII));
+
+        inputBuffer.get(); // read one out
+
+        NumberSequenceClock numberSequenceClock = new NumberSequenceClock(5);
+
+        Fragment numberFragment = numberSequenceClock.submit(inputBuffer);
+
+        Assertions.assertFalse(numberFragment.isStub());
+        Assertions.assertEquals("54321", numberFragment.toString());
+        Assertions.assertEquals(54321, numberFragment.toInt());
+
+        Assertions.assertTrue(inputBuffer.hasRemaining());
+        Assertions.assertEquals((byte)'x', inputBuffer.get());
     }
 
     @Disabled

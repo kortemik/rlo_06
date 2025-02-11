@@ -29,8 +29,8 @@ public class NumberSequenceClock implements Clock<Fragment> {
             bytesRead++;
 
             if (b < '0' || b > '9') {
-                input.position(bytesRead - 1); // seek one backwards
-                slice.limit(bytesRead - 1); // mask the non-number
+                input.position(input.position() - 1); // seek one backwards
+                slice.limit(bytesRead - 1); // mask the non-number, note the slice
                 complete = true;
                 break;
             }
