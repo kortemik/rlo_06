@@ -47,12 +47,18 @@ package com.teragrep.new_rlo_06;
 
 import com.teragrep.new_rlo_06.elements.Message;
 import com.teragrep.new_rlo_06.elements.Priority;
+import com.teragrep.new_rlo_06.elements.Version;
 
 public class FrameStub implements Frame {
 
     @Override
     public Priority priority() {
         throw new UnsupportedOperationException("Stub object does not implement priority()");
+    }
+
+    @Override
+    public Version version() {
+        throw new UnsupportedOperationException("Stub object does not implement version()");
     }
 
     @Override

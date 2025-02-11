@@ -70,6 +70,8 @@ public class FrameLoadTest {
         Assertions.assertEquals("USER", frame.priority().facility().toString());
         Assertions.assertEquals("INFORMATIONAL", frame.priority().severity().toString());
 
+        Assertions.assertEquals(1, frame.version().value());
+
         // TODO remove once complete
         System.out.println(frame.message().message());
     }

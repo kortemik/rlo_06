@@ -45,10 +45,9 @@
  */
 package com.teragrep.new_rlo_06;
 
-import com.teragrep.new_rlo_06.elements.Message;
-import com.teragrep.new_rlo_06.elements.Priority;
-import com.teragrep.new_rlo_06.elements.PriorityStub;
+import com.teragrep.new_rlo_06.elements.*;
 import com.teragrep.new_rlo_06.elements.clocks.PriorityClock;
+import com.teragrep.new_rlo_06.elements.clocks.VersionClock;
 import com.teragrep.new_rlo_06.elements.loads.MessageLoad;
 
 import java.nio.ByteBuffer;
@@ -63,8 +62,10 @@ public class FrameLoad implements Loadable<Frame> {
 
     private static final FrameStub frameStub = new FrameStub();
     private static final PriorityStub priorityStub = new PriorityStub();
+    private static final VersionStub versionStub = new VersionStub();
 
     private final PriorityClock priorityClock = new PriorityClock();
+    private final VersionClock versionClock = new VersionClock();
     private final MessageLoad messageLoad = new MessageLoad();
 
     @Override
@@ -81,9 +82,20 @@ public class FrameLoad implements Loadable<Frame> {
             }
         }
 
+        Version version = versionStub;
+        while (version.isStub()) {
+            ByteBuffer input = buffers.pop();
+            version = versionClock.submit(input);
+
+            if (input.hasRemaining()) {
+                buffers.push(input);
+            }
+        }
+
+
         // message loads them all
         Message message = messageLoad.load(buffers.toArray(new ByteBuffer[0]));
 
-        return new FrameImpl(priority, message);
+        return new FrameImpl(priority, version, message);
     }
 }

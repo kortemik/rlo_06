@@ -47,10 +47,13 @@ package com.teragrep.new_rlo_06;
 
 import com.teragrep.new_rlo_06.elements.Message;
 import com.teragrep.new_rlo_06.elements.Priority;
+import com.teragrep.new_rlo_06.elements.Version;
 
 public interface Frame extends Stubable {
 
     Priority priority();
+
+    Version version();
 
     Message message();
 }
