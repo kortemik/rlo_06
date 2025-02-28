@@ -76,4 +76,5 @@ public class NewLineTerminationClock implements Clock<Fragment> {
 
         return new FragmentImpl(bufferSliceList);
     }
+
 }

@@ -80,6 +80,7 @@ public class ByteFragmentClock implements Clock<Fragment> {
                 break;
             }
             else {
+                bufferSliceList.clear();
                 throw new IllegalArgumentException("invalid byte submited <[" + b + "]>");
             }
         }
@@ -105,8 +106,8 @@ public class ByteFragmentClock implements Clock<Fragment> {
 
         currentLength = currentLength + bytesRead;
         if (currentLength > maximumLength) {
+            bufferSliceList.clear();
             throw new IllegalArgumentException("only one byte may be read with ByteFragmentClock");
         }
     }
-
 }

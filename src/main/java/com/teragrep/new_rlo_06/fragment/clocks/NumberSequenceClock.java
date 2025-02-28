@@ -106,7 +106,9 @@ public class NumberSequenceClock implements Clock<Fragment> {
 
         currentLength = currentLength + bytesRead;
         if (currentLength > maximumLength) {
+            bufferSliceList.clear();
             throw new IllegalArgumentException("too many numbers, maximum allowed is <[" + maximumLength + "]>");
         }
     }
+
 }
