@@ -71,7 +71,7 @@ public class FrameClock implements Clock<Frame> {
     }
 
     @Override
-    public Frame submit(ByteBuffer input) {
+    public ClockResult<Frame> submit(ByteBuffer input) {
         if (true) {
             throw new UnsupportedOperationException("Not supported yet.");
         }

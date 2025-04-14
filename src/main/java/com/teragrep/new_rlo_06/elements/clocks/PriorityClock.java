@@ -46,6 +46,8 @@
 package com.teragrep.new_rlo_06.elements.clocks;
 
 import com.teragrep.new_rlo_06.Clock;
+import com.teragrep.new_rlo_06.ClockResult;
+import com.teragrep.new_rlo_06.elements.Message;
 import com.teragrep.new_rlo_06.elements.Priority;
 import com.teragrep.new_rlo_06.elements.PriorityImpl;
 import com.teragrep.new_rlo_06.elements.PriorityStub;
@@ -79,7 +81,7 @@ public class PriorityClock implements Clock<Priority> {
         this.closeFragment = fragmentStub;
     }
 
-    public Priority submit(ByteBuffer input) {
+    public ClockResult<Priority> submit(ClockResult<Priority> previousResult, ByteBuffer input) {
         Priority priority = priorityStub;
         if (openFragment.isStub()) {
             openFragment = priorityOpenClock.submit(input);

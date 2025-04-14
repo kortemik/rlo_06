@@ -9,17 +9,12 @@ public class TimestampStub implements Timestamp {
     }
 
     @Override
-    public boolean isStub() {
-        return true;
-    }
-
-    @Override
     public boolean isNil() {
         throw new UnsupportedOperationException("Stub object does not implement isNil()");
     }
 
     @Override
-    public boolean rejected() {
-        return false;
+    public boolean isStub() {
+        return true;
     }
 }

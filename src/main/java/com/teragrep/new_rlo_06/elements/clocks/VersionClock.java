@@ -1,6 +1,9 @@
 package com.teragrep.new_rlo_06.elements.clocks;
 
 import com.teragrep.new_rlo_06.Clock;
+import com.teragrep.new_rlo_06.ClockResult;
+import com.teragrep.new_rlo_06.ClockResultFailed;
+import com.teragrep.new_rlo_06.elements.Message;
 import com.teragrep.new_rlo_06.elements.Version;
 import com.teragrep.new_rlo_06.elements.VersionImpl;
 import com.teragrep.new_rlo_06.elements.VersionStub;
@@ -10,6 +13,7 @@ import com.teragrep.new_rlo_06.fragment.clocks.ByteFragmentClock;
 import java.nio.ByteBuffer;
 
 public class VersionClock implements Clock<Version> {
+    private static final ClockResultFailed<Version> failed = new ClockResultFailed<>();
     private static final VersionStub versionStub = new VersionStub();
 
     private final ByteFragmentClock versionFragmentClock;
@@ -20,8 +24,8 @@ public class VersionClock implements Clock<Version> {
 
 
     @Override
-    public Version submit(ByteBuffer input) {
-        Fragment versionFragment = versionFragmentClock.submit(input);
+    public ClockResult<Version> submit(ClockResult<Version> previousResult, ByteBuffer input) {
+        Fragment versionFragment = versionFragmentClock.submit(previousResult, input);
 
         final Version version;
         if (!versionFragment.isStub()) {
@@ -30,6 +34,6 @@ public class VersionClock implements Clock<Version> {
         else {
             version = versionStub;
         }
-        return version;
+        return failed;
     }
 }

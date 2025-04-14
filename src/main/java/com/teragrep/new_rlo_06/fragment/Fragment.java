@@ -47,10 +47,9 @@ package com.teragrep.new_rlo_06.fragment;
 
 // FIXME this is a copy from rlp_03, with byteStream removed
 
-public interface Fragment {
+import com.teragrep.new_rlo_06.Stubable;
 
-    boolean isStub();
-
+public interface Fragment extends Stubable {
     byte[] toBytes();
 
     String toString();

@@ -47,7 +47,7 @@ package com.teragrep.new_rlo_06;
 
 import java.nio.ByteBuffer;
 
-public interface Clock<T> {
+public interface Clock<T extends Stubable> {
 
-    T submit(ByteBuffer input);
+    ClockResult<T> submit(ClockResult<T> previousResult, ByteBuffer input);
 }

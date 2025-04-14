@@ -46,6 +46,8 @@
 package com.teragrep.new_rlo_06.fragment.clocks;
 
 import com.teragrep.new_rlo_06.Clock;
+import com.teragrep.new_rlo_06.ClockResult;
+import com.teragrep.new_rlo_06.ClockResultFailed;
 import com.teragrep.new_rlo_06.fragment.Fragment;
 import com.teragrep.new_rlo_06.fragment.FragmentImpl;
 
@@ -54,7 +56,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class NewLineTerminationClock implements Clock<Fragment> {
-
+    private static final ClockResultFailed<Fragment> failed = new ClockResultFailed<>();
     private final List<ByteBuffer> bufferSliceList;
 
     public NewLineTerminationClock() {
@@ -62,7 +64,7 @@ public class NewLineTerminationClock implements Clock<Fragment> {
     }
 
     @Override
-    public Fragment submit(ByteBuffer input) {
+    public ClockResult<Fragment> submit(ClockResult<Fragment> previousResult, ByteBuffer input) {
         if (true) {
             throw new UnsupportedOperationException("not implemented yet");
         }
@@ -74,7 +76,6 @@ public class NewLineTerminationClock implements Clock<Fragment> {
 
         bufferSliceList.add(slice);
 
-        return new FragmentImpl(bufferSliceList);
+        return failed;
     }
-
 }

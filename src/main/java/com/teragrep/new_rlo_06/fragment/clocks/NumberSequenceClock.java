@@ -46,6 +46,9 @@
 package com.teragrep.new_rlo_06.fragment.clocks;
 
 import com.teragrep.new_rlo_06.Clock;
+import com.teragrep.new_rlo_06.ClockResult;
+import com.teragrep.new_rlo_06.ClockResultFailed;
+import com.teragrep.new_rlo_06.ClockResultImpl;
 import com.teragrep.new_rlo_06.fragment.Fragment;
 import com.teragrep.new_rlo_06.fragment.FragmentImpl;
 import com.teragrep.new_rlo_06.fragment.FragmentStub;
@@ -54,6 +57,7 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
 public class NumberSequenceClock implements Clock<Fragment> {
+    private static final ClockResultFailed<Fragment> failed = new ClockResultFailed<>();
 
     private static final FragmentStub fragmentStub = new FragmentStub();
 
@@ -65,7 +69,7 @@ public class NumberSequenceClock implements Clock<Fragment> {
         this.maximumLength = maximumLength;
     }
 
-    public Fragment submit(ByteBuffer input) {
+    public ClockResult<Fragment> submit(ClockResult<Fragment> previousResult, ByteBuffer input) {
 
         ByteBuffer slice = input.slice();
         int bytesRead = 0;
@@ -95,7 +99,7 @@ public class NumberSequenceClock implements Clock<Fragment> {
             fragment = fragmentStub;
         }
 
-        return fragment;
+        return new ClockResultImpl<>(fragment, new LinkedList<>(bufferSliceList));
     }
 
     private void checkOverSize(int bytesRead, LinkedList<ByteBuffer> bufferSliceList) {
@@ -110,5 +114,4 @@ public class NumberSequenceClock implements Clock<Fragment> {
             throw new IllegalArgumentException("too many numbers, maximum allowed is <[" + maximumLength + "]>");
         }
     }
-
 }

@@ -46,14 +46,21 @@
 package com.teragrep.new_rlo_06.fragment.clocks;
 
 import com.teragrep.new_rlo_06.Clock;
+import com.teragrep.new_rlo_06.ClockResult;
+import com.teragrep.new_rlo_06.ClockResultFailed;
+import com.teragrep.new_rlo_06.ClockResultImpl;
 import com.teragrep.new_rlo_06.fragment.FragmentImpl;
 import com.teragrep.new_rlo_06.fragment.FragmentStub;
 import com.teragrep.new_rlo_06.fragment.Fragment;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ByteFragmentClock implements Clock<Fragment> {
+    private static final ClockResultFailed<Fragment> failed = new ClockResultFailed<>();
 
     private static final FragmentStub fragmentStub = new FragmentStub();
     private final LinkedList<ByteBuffer> bufferSliceList;
@@ -65,7 +72,19 @@ public class ByteFragmentClock implements Clock<Fragment> {
         this.requiredByte = requiredByte;
     }
 
-    public Fragment submit(ByteBuffer input) {
+    public ClockResult<Fragment> submit(ClockResult<Fragment> previousResult, ByteBuffer input) {
+
+        if (!previousResult.value().isStub()) {
+            // already complete, so just more buffers are added
+
+            List<ByteBuffer> moreBackingBuffers = new ArrayList<>(previousResult.buffers().size());
+            moreBackingBuffers.addAll(previousResult.buffers());
+            moreBackingBuffers.add(input);
+
+            return new ClockResultImpl<>(previousResult.value(), moreBackingBuffers);
+        }
+
+        ClockResult<Fragment> rv;
 
         ByteBuffer slice = input.slice();
         int bytesRead = 0;
@@ -73,7 +92,7 @@ public class ByteFragmentClock implements Clock<Fragment> {
         while (input.hasRemaining()) {
             byte b = input.get();
             bytesRead++;
-            checkOverSize(bytesRead, bufferSliceList);
+
             if (b == requiredByte) {
                 slice.limit(bytesRead);
                 complete = true;
@@ -81,7 +100,8 @@ public class ByteFragmentClock implements Clock<Fragment> {
             }
             else {
                 bufferSliceList.clear();
-                throw new IllegalArgumentException("invalid byte submited <[" + b + "]>");
+                return failed;
+                // throw new IllegalArgumentException("invalid byte submited <[" + b + "]>");
             }
         }
         bufferSliceList.add(slice);
@@ -94,20 +114,8 @@ public class ByteFragmentClock implements Clock<Fragment> {
         else {
             fragment = fragmentStub;
         }
-        return fragment;
+        rv = new ClockResultImpl<>(fragment,bufferSliceList);
 
-    }
-
-    private void checkOverSize(int bytesRead, LinkedList<ByteBuffer> bufferSliceList) {
-        long currentLength = 0;
-        for (ByteBuffer slice : bufferSliceList) {
-            currentLength = currentLength + slice.limit();
-        }
-
-        currentLength = currentLength + bytesRead;
-        if (currentLength > maximumLength) {
-            bufferSliceList.clear();
-            throw new IllegalArgumentException("only one byte may be read with ByteFragmentClock");
-        }
+        return rv;
     }
 }

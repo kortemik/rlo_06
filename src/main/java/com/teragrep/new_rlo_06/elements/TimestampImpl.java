@@ -16,17 +16,12 @@ public class TimestampImpl implements Timestamp {
     }
 
     @Override
-    public boolean isStub() {
-        return false;
-    }
-
-    @Override
     public boolean isNil() {
         return false;
     }
 
     @Override
-    public boolean rejected() {
+    public boolean isStub() {
         return false;
     }
 }
