@@ -63,7 +63,7 @@ public class VersionTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         version.accept(stream);
@@ -80,7 +80,7 @@ public class VersionTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
         assertThrows(VersionParseException.class, () -> {
-            Stream stream = new Stream();
+            Stream stream = new StreamImpl();
             stream.setInputStream(bais);
             version.accept(stream);
             version.toString();
@@ -96,7 +96,7 @@ public class VersionTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
         assertThrows(VersionParseException.class, () -> {
-            Stream stream = new Stream();
+            Stream stream = new StreamImpl();
             stream.setInputStream(bais);
             version.accept(stream);
             version.toString();

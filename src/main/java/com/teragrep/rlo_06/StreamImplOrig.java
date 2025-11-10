@@ -45,61 +45,55 @@
  */
 package com.teragrep.rlo_06;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+final class StreamImplOrig implements Stream {
 
-public class ProcIdTest {
+    private InputStream inputStream;
 
-    @Test
-    public void parseTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
+    private final byte[] buffer = new byte[256 * 1024];
+    private int pointer = -1;
+    private int bytesInBuffer = -1;
+    private byte b;
 
-        String input = "cade00f0-3260-4b88-ab61-d644a75dfbbb ";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        Stream stream = new StreamImpl();
-        stream.setInputStream(bais);
-
-        procId.accept(stream);
-
-        Assertions.assertEquals("cade00f0-3260-4b88-ab61-d644a75dfbbb", procId.toString());
+    StreamImplOrig() {
+        this.inputStream = new ByteArrayInputStream(new byte[0]);
     }
 
-    @Test
-    public void emptyProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public void setInputStream(InputStream inputStream) {
+        this.pointer = -1;
+        this.bytesInBuffer = -1;
+        this.inputStream = inputStream;
     }
 
-    @Test
-    public void tooLongProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
+    @Override
+    public Byte get() {
+        return b;
+    }
 
-        String input = new String(new char[256]).replace('\0', 'x');
+    @Override
+    public boolean next() {
+        if (pointer == bytesInBuffer) {
+            int read;
+            try {
+                read = inputStream.read(buffer, 0, buffer.length);
+            }
+            catch (IOException ioException) {
+                throw new UncheckedIOException(ioException);
+            }
+            if (read <= 0) { // EOF
+                pointer = bytesInBuffer;
+                return false;
+            }
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ProcIdParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+            bytesInBuffer = read;
+            pointer = 0;
+        }
+        b = buffer[pointer++];
+        return true;
     }
 }

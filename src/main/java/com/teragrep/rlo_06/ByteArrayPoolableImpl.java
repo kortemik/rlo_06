@@ -45,61 +45,31 @@
  */
 package com.teragrep.rlo_06;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.teragrep.rlp_01.pool.Poolable;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+public class ByteArrayPoolableImpl implements Poolable, ByteArrayPoolable {
 
-public class ProcIdTest {
+    private final byte[] bytes;
 
-    @Test
-    public void parseTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "cade00f0-3260-4b88-ab61-d644a75dfbbb ";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        Stream stream = new StreamImpl();
-        stream.setInputStream(bais);
-
-        procId.accept(stream);
-
-        Assertions.assertEquals("cade00f0-3260-4b88-ab61-d644a75dfbbb", procId.toString());
+    public ByteArrayPoolableImpl(byte[] bytes) {
+        this.bytes = bytes;
     }
 
-    @Test
-    public void emptyProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public byte[] bytes() {
+        return bytes;
     }
 
-    @Test
-    public void tooLongProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
+    @Override
+    public boolean isStub() {
+        return false;
+    }
 
-        String input = new String(new char[256]).replace('\0', 'x');
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ProcIdParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public void close() throws IOException {
+        Arrays.fill(bytes, (byte) 0);
     }
 }

@@ -61,7 +61,7 @@ public class StructuredDataTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         structuredData.accept(stream);
@@ -86,7 +86,7 @@ public class StructuredDataTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         structuredData.accept(stream);
@@ -116,7 +116,7 @@ public class StructuredDataTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         structuredData.accept(stream);
@@ -144,7 +144,7 @@ public class StructuredDataTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         structuredData.accept(stream);

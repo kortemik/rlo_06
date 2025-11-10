@@ -45,61 +45,38 @@
  */
 package com.teragrep.rlo_06;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.teragrep.rlp_01.pool.Pool;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+public class ByteBufferLeaseImpl implements ByteBufferLease {
 
-public class ProcIdTest {
+    private final Pool<ByteArrayPoolable> bytePool;
+    private final ByteArrayPoolable byteArrayPoolable;
+    private final ByteBuffer buffer;
 
-    @Test
-    public void parseTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "cade00f0-3260-4b88-ab61-d644a75dfbbb ";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        Stream stream = new StreamImpl();
-        stream.setInputStream(bais);
-
-        procId.accept(stream);
-
-        Assertions.assertEquals("cade00f0-3260-4b88-ab61-d644a75dfbbb", procId.toString());
+    public ByteBufferLeaseImpl(
+            Pool<ByteArrayPoolable> bytePool,
+            ByteArrayPoolable byteArrayPoolable,
+            ByteBuffer buffer
+    ) {
+        this.bytePool = bytePool;
+        this.byteArrayPoolable = byteArrayPoolable;
+        this.buffer = buffer;
     }
 
-    @Test
-    public void emptyProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public ByteBuffer buffer() {
+        return buffer;
     }
 
-    @Test
-    public void tooLongProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
+    @Override
+    public void close() {
+        bytePool.offer(byteArrayPoolable);
+    }
 
-        String input = new String(new char[256]).replace('\0', 'x');
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ProcIdParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public boolean isStub() {
+        return false;
     }
 }

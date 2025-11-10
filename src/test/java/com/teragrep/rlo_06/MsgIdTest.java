@@ -63,7 +63,7 @@ public class MsgIdTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         msgId.accept(stream);
@@ -79,7 +79,7 @@ public class MsgIdTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         msgId.accept(stream);
@@ -95,7 +95,7 @@ public class MsgIdTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
         assertThrows(MsgIdParseException.class, () -> {
-            Stream stream = new Stream();
+            Stream stream = new StreamImpl();
             stream.setInputStream(bais);
             msgId.accept(stream);
             msgId.toString();

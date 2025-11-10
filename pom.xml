@@ -49,6 +49,12 @@
     <sha1></sha1>
   </properties>
   <dependencies>
+    <!-- just for the pool -->
+    <dependency>
+      <groupId>com.teragrep</groupId>
+      <artifactId>rlp_01</artifactId>
+      <version>5.0.0</version>
+    </dependency>
     <!-- /// just for timestamp parsing \\\ -->
     <dependency>
       <groupId>javax.xml.bind</groupId>

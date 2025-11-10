@@ -45,61 +45,71 @@
  */
 package com.teragrep.rlo_06;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+final class StreamImpl implements Stream {
 
-public class ProcIdTest {
+    private final InputStreamByteBufferPump pump;
 
-    @Test
-    public void parseTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
+    private static final ByteBufferLease emptyBufferLease = new ByteBufferLeaseStub();
+    private InputStream inputStream;
+    private ByteBufferLease byteBufferLease;
+    private byte b;
 
-        String input = "cade00f0-3260-4b88-ab61-d644a75dfbbb ";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        Stream stream = new StreamImpl();
-        stream.setInputStream(bais);
-
-        procId.accept(stream);
-
-        Assertions.assertEquals("cade00f0-3260-4b88-ab61-d644a75dfbbb", procId.toString());
+    StreamImpl() {
+        this.byteBufferLease = emptyBufferLease;
+        this.inputStream = new ByteArrayInputStream(new byte[0]);
+        this.pump = new InputStreamByteBufferPump();
     }
 
-    @Test
-    public void emptyProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public void setInputStream(InputStream inputStream) {
+        this.byteBufferLease = emptyBufferLease;
+        this.inputStream = inputStream;
     }
 
-    @Test
-    public void tooLongProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
+    @Override
+    public Byte get() {
+        //System.out.println("returning " + b);
+        return b;
+    }
 
-        String input = new String(new char[256]).replace('\0', 'x');
+    @Override
+    public boolean next() {
+        if (byteBufferLease.isStub() || !byteBufferLease.buffer().hasRemaining()) {
+            try {
+                byteBufferLease.close();
+            }
+            catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            try {
+                byteBufferLease = pump.pump(inputStream);
+            }
+            catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
+        final boolean hasRemaining;
+        if (byteBufferLease.isStub() || !byteBufferLease.buffer().hasRemaining()) {
+            try {
+                byteBufferLease.close();
+            }
+            catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+            hasRemaining = false;
+        }
+        else {
+            hasRemaining = true;
+            b = byteBufferLease.buffer().get();
+        }
 
-        assertThrows(ProcIdParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+        //System.out.println("next says " + hasRemaining + " cuz currentBuffer is " + currentBuffer);
+        return hasRemaining;
     }
 }

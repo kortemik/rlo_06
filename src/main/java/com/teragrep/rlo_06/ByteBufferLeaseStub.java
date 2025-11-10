@@ -45,61 +45,22 @@
  */
 package com.teragrep.rlo_06;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import java.nio.ByteBuffer;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+public class ByteBufferLeaseStub implements ByteBufferLease {
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-public class ProcIdTest {
-
-    @Test
-    public void parseTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "cade00f0-3260-4b88-ab61-d644a75dfbbb ";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        Stream stream = new StreamImpl();
-        stream.setInputStream(bais);
-
-        procId.accept(stream);
-
-        Assertions.assertEquals("cade00f0-3260-4b88-ab61-d644a75dfbbb", procId.toString());
+    @Override
+    public ByteBuffer buffer() {
+        throw new UnsupportedOperationException("stub does not support buffer()");
     }
 
-    @Test
-    public void emptyProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public boolean isStub() {
+        return true;
     }
 
-    @Test
-    public void tooLongProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = new String(new char[256]).replace('\0', 'x');
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ProcIdParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    @Override
+    public void close() {
+        // no-op
     }
 }

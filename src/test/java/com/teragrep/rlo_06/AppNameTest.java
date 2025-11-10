@@ -63,7 +63,7 @@ public class AppNameTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         appName.accept(stream);
@@ -78,7 +78,7 @@ public class AppNameTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         appName.accept(stream);
@@ -95,7 +95,7 @@ public class AppNameTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
         assertThrows(AppNameParseException.class, () -> {
-            Stream stream = new Stream();
+            Stream stream = new StreamImpl();
             stream.setInputStream(bais);
             appName.accept(stream);
             appName.toString();

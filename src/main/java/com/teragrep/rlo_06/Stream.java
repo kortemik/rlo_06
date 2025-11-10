@@ -45,53 +45,14 @@
  */
 package com.teragrep.rlo_06;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.function.Supplier;
 
-final class Stream implements Supplier<Byte> {
+public abstract interface Stream extends Supplier<Byte> {
 
-    private InputStream inputStream;
+    public abstract void setInputStream(InputStream inputStream);
 
-    private final byte[] buffer = new byte[256 * 1024];
-    private int pointer = -1;
-    private int bytesInBuffer = -1;
-    private byte b;
+    public abstract Byte get();
 
-    Stream() {
-        this.inputStream = new ByteArrayInputStream(new byte[0]);
-    }
-
-    public void setInputStream(InputStream inputStream) {
-        this.pointer = -1;
-        this.bytesInBuffer = -1;
-        this.inputStream = inputStream;
-    }
-
-    public Byte get() {
-        return b;
-    }
-
-    boolean next() {
-        if (pointer == bytesInBuffer) {
-            int read;
-            try {
-                read = inputStream.read(buffer, 0, buffer.length);
-            }
-            catch (IOException ioException) {
-                throw new UncheckedIOException(ioException);
-            }
-            if (read <= 0) { // EOF
-                pointer = bytesInBuffer;
-                return false;
-            }
-
-            bytesInBuffer = read;
-            pointer = 0;
-        }
-        b = buffer[pointer++];
-        return true;
-    }
+    public abstract boolean next();
 }

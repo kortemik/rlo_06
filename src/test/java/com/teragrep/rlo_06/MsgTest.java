@@ -62,7 +62,7 @@ public class MsgTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         Assertions.assertTrue(stream.next()); // msg requires stream called with next
@@ -80,7 +80,7 @@ public class MsgTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         Assertions.assertTrue(stream.next()); // msg requires stream called with next
@@ -98,7 +98,7 @@ public class MsgTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         Assertions.assertTrue(stream.next()); // msg requires stream called with next
@@ -116,7 +116,7 @@ public class MsgTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         Assertions.assertTrue(stream.next()); // msg requires stream called with next
@@ -134,7 +134,7 @@ public class MsgTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         Assertions.assertTrue(stream.next()); // msg requires stream called with next
@@ -152,7 +152,7 @@ public class MsgTest {
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
 
-        Stream stream = new Stream();
+        Stream stream = new StreamImpl();
         stream.setInputStream(bais);
 
         Assertions.assertTrue(stream.next()); // msg requires stream called with next

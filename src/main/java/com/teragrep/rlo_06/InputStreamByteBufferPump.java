@@ -45,61 +45,53 @@
  */
 package com.teragrep.rlo_06;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.teragrep.rlp_01.pool.Pool;
+import com.teragrep.rlp_01.pool.UnboundPool;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+public class InputStreamByteBufferPump {
 
-public class ProcIdTest {
+    private final ByteBufferLeaseStub bufferLeaseStub = new ByteBufferLeaseStub();
+    private final Pool<ByteArrayPoolable> bytePool;
 
-    @Test
-    public void parseTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "cade00f0-3260-4b88-ab61-d644a75dfbbb ";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        Stream stream = new StreamImpl();
-        stream.setInputStream(bais);
-
-        procId.accept(stream);
-
-        Assertions.assertEquals("cade00f0-3260-4b88-ab61-d644a75dfbbb", procId.toString());
+    public InputStreamByteBufferPump() {
+        this(new UnboundPool<>(() -> new ByteArrayPoolableImpl(new byte[256 * 1024]), new ByteArrayPoolableStub()));
     }
 
-    @Test
-    public void emptyProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
-
-        String input = "";
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-
-        assertThrows(ParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+    public InputStreamByteBufferPump(Pool<ByteArrayPoolable> bytePool) {
+        this.bytePool = bytePool;
     }
 
-    @Test
-    public void tooLongProcIdTest() {
-        Fragment procId = new Fragment(128, new ProcIdFunction());
+    public ByteBufferLease pump(InputStream inputStream) throws IOException {
 
-        String input = new String(new char[256]).replace('\0', 'x');
+        ByteArrayPoolable byteArrayPoolable = bytePool.get();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
+        byte[] bytes = byteArrayPoolable.bytes();
 
-        assertThrows(ProcIdParseException.class, () -> {
-            Stream stream = new StreamImpl();
-            stream.setInputStream(bais);
-            procId.accept(stream);
-            procId.toString();
-        });
+        int read = inputStream.read(bytes);
+        if (read >= 0) {
+            ByteBuffer buffer = ByteBuffer.wrap(bytes);
+            buffer.flip().limit(read);
+            return new ByteBufferLeaseImpl(bytePool, byteArrayPoolable, buffer);
+        }
+        else {
+            // returning empty back
+            bytePool.offer(byteArrayPoolable);
+            return bufferLeaseStub;
+        }
     }
+
+    public void release(ByteBuffer buffer) {
+    }
+
+    // input buffers are different than the content buffers but should all go back the same way, like .release() in net_01
+    // should input be a decorated one and on close release?
+    // so are the pools so are the buffers, net_01 buf solution to own project, supplier for array backed an perhaps that ugly newChannel(inputStrea) read() solution here in the pump and be done with the pumping?
+    // who should track the '\n' should it be the pump?
+
+    // use java21 and MemorySegment for abstraction of both cases and use net_01 ref counting solution
+
 }
