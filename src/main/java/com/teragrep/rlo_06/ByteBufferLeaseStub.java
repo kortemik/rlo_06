@@ -47,7 +47,7 @@ package com.teragrep.rlo_06;
 
 import java.nio.ByteBuffer;
 
-public class ByteBufferLeaseStub implements ByteBufferLease {
+public final class ByteBufferLeaseStub implements ByteBufferLease {
 
     @Override
     public ByteBuffer buffer() {

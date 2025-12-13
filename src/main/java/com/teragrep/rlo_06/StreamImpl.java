@@ -57,18 +57,24 @@ final class StreamImpl implements Stream {
     private static final ByteBufferLease emptyBufferLease = new ByteBufferLeaseStub();
     private InputStream inputStream;
     private ByteBufferLease byteBufferLease;
+    private int offset;
+    private int length;
     private byte b;
+    private byte[] buffer;
 
     StreamImpl() {
         this.byteBufferLease = emptyBufferLease;
         this.inputStream = new ByteArrayInputStream(new byte[0]);
         this.pump = new InputStreamByteBufferPump();
+        this.offset = 0;
     }
 
     @Override
     public void setInputStream(InputStream inputStream) {
         this.byteBufferLease = emptyBufferLease;
         this.inputStream = inputStream;
+        this.buffer = null;
+        this.offset = 0;
     }
 
     @Override
@@ -79,7 +85,7 @@ final class StreamImpl implements Stream {
 
     @Override
     public boolean next() {
-        if (byteBufferLease.isStub() || !byteBufferLease.buffer().hasRemaining()) {
+        if (offset >= length) {
             try {
                 byteBufferLease.close();
             }
@@ -88,6 +94,14 @@ final class StreamImpl implements Stream {
             }
             try {
                 byteBufferLease = pump.pump(inputStream);
+                if (!byteBufferLease.isStub()) {
+                    length = byteBufferLease.buffer().limit();
+                    buffer = byteBufferLease.buffer().array();
+                    offset = 0;
+                }
+                else {
+                    offset = length + 1;
+                }
             }
             catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -95,9 +109,13 @@ final class StreamImpl implements Stream {
         }
 
         final boolean hasRemaining;
-        if (byteBufferLease.isStub() || !byteBufferLease.buffer().hasRemaining()) {
+        if (offset >= length) {
             try {
-                byteBufferLease.close();
+                buffer = null;
+                byteBufferLease.close(); // goes back to pool
+                byteBufferLease = emptyBufferLease;
+                offset = 0;
+                length = 0;
             }
             catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -106,7 +124,10 @@ final class StreamImpl implements Stream {
         }
         else {
             hasRemaining = true;
-            b = byteBufferLease.buffer().get();
+
+            //b = (byte) varHandle.get(memorySegment, offset);
+            b = buffer[offset];
+            offset++;
         }
 
         //System.out.println("next says " + hasRemaining + " cuz currentBuffer is " + currentBuffer);

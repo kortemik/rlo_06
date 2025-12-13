@@ -49,7 +49,7 @@ import com.teragrep.rlp_01.pool.Pool;
 
 import java.nio.ByteBuffer;
 
-public class ByteBufferLeaseImpl implements ByteBufferLease {
+public final class ByteBufferLeaseImpl implements ByteBufferLease {
 
     private final Pool<ByteArrayPoolable> bytePool;
     private final ByteArrayPoolable byteArrayPoolable;

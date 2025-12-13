@@ -84,9 +84,6 @@ public class InputStreamByteBufferPump {
         }
     }
 
-    public void release(ByteBuffer buffer) {
-    }
-
     // input buffers are different than the content buffers but should all go back the same way, like .release() in net_01
     // should input be a decorated one and on close release?
     // so are the pools so are the buffers, net_01 buf solution to own project, supplier for array backed an perhaps that ugly newChannel(inputStrea) read() solution here in the pump and be done with the pumping?
