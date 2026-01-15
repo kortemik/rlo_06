@@ -52,85 +52,48 @@ import java.io.UncheckedIOException;
 
 final class StreamImpl implements Stream {
 
-    private final InputStreamByteBufferPump pump;
-
-    private static final ByteBufferLease emptyBufferLease = new ByteBufferLeaseStub();
     private InputStream inputStream;
-    private ByteBufferLease byteBufferLease;
-    private int offset;
-    private int length;
+
+    private final byte[] buffer = new byte[256 * 1024];
+    private int pointer = -1;
+    private int bytesInBuffer = -1;
     private byte b;
-    private byte[] buffer;
 
     StreamImpl() {
-        this.byteBufferLease = emptyBufferLease;
         this.inputStream = new ByteArrayInputStream(new byte[0]);
-        this.pump = new InputStreamByteBufferPump();
-        this.offset = 0;
     }
 
     @Override
     public void setInputStream(InputStream inputStream) {
-        this.byteBufferLease = emptyBufferLease;
+        this.pointer = -1;
+        this.bytesInBuffer = -1;
         this.inputStream = inputStream;
-        this.buffer = null;
-        this.offset = 0;
     }
 
     @Override
     public Byte get() {
-        //System.out.println("returning " + b);
         return b;
     }
 
     @Override
     public boolean next() {
-        if (offset >= length) {
+        if (pointer == bytesInBuffer) {
+            int read;
             try {
-                byteBufferLease.close();
+                read = inputStream.read(buffer, 0, buffer.length);
             }
-            catch (IOException e) {
-                throw new UncheckedIOException(e);
+            catch (IOException ioException) {
+                throw new UncheckedIOException(ioException);
             }
-            try {
-                byteBufferLease = pump.pump(inputStream);
-                if (!byteBufferLease.isStub()) {
-                    length = byteBufferLease.buffer().limit();
-                    buffer = byteBufferLease.buffer().array();
-                    offset = 0;
-                }
-                else {
-                    offset = length + 1;
-                }
+            if (read <= 0) { // EOF
+                pointer = bytesInBuffer;
+                return false;
             }
-            catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
 
-        final boolean hasRemaining;
-        if (offset >= length) {
-            try {
-                buffer = null;
-                byteBufferLease.close(); // goes back to pool
-                byteBufferLease = emptyBufferLease;
-                offset = 0;
-                length = 0;
-            }
-            catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-            hasRemaining = false;
+            bytesInBuffer = read;
+            pointer = 0;
         }
-        else {
-            hasRemaining = true;
-
-            //b = (byte) varHandle.get(memorySegment, offset);
-            b = buffer[offset];
-            offset++;
-        }
-
-        //System.out.println("next says " + hasRemaining + " cuz currentBuffer is " + currentBuffer);
-        return hasRemaining;
+        b = buffer[pointer++];
+        return true;
     }
 }
