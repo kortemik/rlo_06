@@ -45,7 +45,6 @@
  */
 package com.teragrep.rlo_06;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Consumer;
 
@@ -107,7 +106,7 @@ public final class RFC5424Frame {
                 );
     }
 
-    public boolean next() throws IOException {
+    public boolean next() {
         /*
         Following abbreviations are used to indicate parsing in the comments.
         
